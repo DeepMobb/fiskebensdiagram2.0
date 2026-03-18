@@ -1,0 +1,723 @@
+/* === Global styling === */
+body {
+  font-family: Arial, sans-serif;
+  background: #f4f4f4;
+  margin: 0;
+  padding: 0;
+}
+
+h1 {
+  text-align: center;
+  margin-top: 20px;
+  font-size: 2em;
+  color: #283c6c;
+}
+
+.container {
+  max-width: 1190px;
+  margin: 25px auto;
+  background: #fff;
+  border-radius: 10px;
+  padding: 6px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.13);
+}
+
+.diagram-container {
+  position: relative;
+  width: 1122px;
+  height: 793px;
+  background: #fff;
+  border: 1.1px solid #eee;
+  margin: 0 auto;
+  box-sizing: border-box;
+  overflow: hidden;
+  padding: 0;
+  cursor: crosshair;
+}
+
+#fishboneSvg {
+  pointer-events: none;
+  display: block;
+}
+
+.controls {
+  margin: 18px 0 8px 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  font-size: 15px;
+}
+
+.controls button {
+  appearance: none;
+  border: 1px solid transparent;
+  border-radius: 12px;
+  padding: 10px 16px;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: 0.2px;
+  cursor: pointer;
+  transition: transform .08s ease, box-shadow .18s ease, background .18s ease, border-color .18s ease;
+}
+
+#savePdfBtn {
+  background: #2e4bb8;
+  color: #fff;
+  border-color: #2e4bb8;
+  box-shadow: 0 8px 18px rgba(46, 75, 184, 0.25);
+}
+#savePdfBtn:hover {
+  background: #2945ad;
+  box-shadow: 0 10px 24px rgba(46, 75, 184, 0.32);
+}
+#savePdfBtn:active {
+  transform: translateY(1px);
+  box-shadow: 0 6px 14px rgba(46, 75, 184, 0.25);
+}
+#savePdfBtn:focus-visible {
+  outline: 3px solid #9bb4ff;
+  outline-offset: 2px;
+}
+
+#showWhyBtn,
+#saveProjectBtn,
+#openProjectBtn {
+  background: #f4f7ff;
+  color: #1f3b8c;
+  border-color: #dde6ff;
+  box-shadow: 0 3px 10px rgba(31, 59, 140, 0.08);
+}
+#showWhyBtn:hover,
+#saveProjectBtn:hover,
+#openProjectBtn:hover {
+  background: #edf3ff;
+  border-color: #cfdcff;
+  box-shadow: 0 6px 16px rgba(31, 59, 140, 0.12);
+}
+#showWhyBtn:active,
+#saveProjectBtn:active,
+#openProjectBtn:active {
+  transform: translateY(1px);
+  box-shadow: 0 4px 12px rgba(31, 59, 140, 0.1);
+}
+#showWhyBtn:focus-visible,
+#saveProjectBtn:focus-visible,
+#openProjectBtn:focus-visible {
+  outline: 3px solid #a7c2ff;
+  outline-offset: 2px;
+}
+
+.controls button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.controls > span {
+  color: #5f6b86;
+  font-size: 15px;
+}
+
+/* === Problem-boks === */
+#problemBox {
+  position: absolute;
+  left: 825px;
+  top: 105px;
+  width: 250px;
+  min-width: 110px;
+  max-width: 350px;
+  min-height: 80px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 14px;
+  color: crimson;
+  background: #fff;
+  border: 2.5px solid crimson;
+  border-radius: 9px;
+  font-size: 22px;
+  font-weight: bold;
+  text-align: center;
+  z-index: 999;
+  outline: none;
+  box-sizing: border-box;
+  resize: vertical;
+  word-break: break-word;
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+  transition: color 0.2s;
+}
+#problemBox.placeholder {
+  color: #c4a6a6;
+}
+
+/* === Tilføj årsag-popup === */
+.custom-popup {
+  display: none;
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  background: #fff;
+  border: 2px solid #2a4b7c;
+  padding: 11px 18px 13px 18px;
+  z-index: 20000;
+  border-radius: 8px;
+  min-width: 250px;
+  box-shadow: 0 6px 20px rgba(60,60,80,0.15);
+  text-align: center;
+}
+.custom-popup input {
+  font-size: 20px;
+  padding: 7px;
+  margin-bottom: 11px;
+  width: 92%;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+.custom-popup button {
+  font-size: 18px;
+  margin: 0 4px;
+  padding: 7px 18px;
+  border-radius: 6px;
+  border: none;
+  background: #2a4b7c;
+  color: #fff;
+  cursor: pointer;
+}
+.custom-popup button:last-child {
+  background: #c32e32;
+}
+
+/* === Redigering af årsag === */
+.edit-cause-input {
+  position: absolute;
+  z-index: 20000;
+  font-size: 19px;
+  font-weight: bold;
+  color: #2a4b7c;
+  background: #fff9e4;
+  border: 1px solid #a8a7a7;
+  border-radius: 7px;
+  padding: 6px;
+  box-sizing: border-box;
+  line-height: 1.4;
+  overflow-wrap: break-word;
+  white-space: pre-wrap;
+  resize: vertical;
+  outline: none;
+}
+.edit-cause-input:focus {
+  border-color: #3870d0;
+  box-shadow: 0 0 4px rgba(56, 112, 208, 0.5);
+  background: #fffceb;
+}
+
+/* === Årsagsbokse === */
+.causeBox {
+  position: absolute;
+  min-width: 150px;
+  width: 220px;
+  max-width: 500px;
+  font-size: 19px;
+  line-height: 1.4;
+  color: #2a4b7c;
+  font-weight: bold;
+  background: #fff9e4;
+  padding: 28px 6px 6px 6px;
+  border: 1px solid #a8a7a7;
+  border-radius: 7px;
+  display: block;
+  text-align: left;
+  cursor: move;
+  user-select: none;
+  overflow-wrap: break-word;
+  white-space: pre-wrap;
+  height: auto;
+  max-height: 420px;
+  overflow-y: auto;
+  resize: both;
+  box-sizing: border-box;
+  z-index: 20;
+  transition: box-shadow .13s;
+}
+.causeBox.editing {
+  color: #dd5050;
+  background: #fff9e0;
+  border: 1px dotted #333;
+  cursor: text;
+  user-select: text;
+}
+.causeText {
+  display: block;
+  white-space: pre-wrap;
+}
+
+/* === 5xWHY-ikon på boks === */
+.why-icon {
+  position: absolute;
+  top: 4px;
+  right: 6px;
+  z-index: 30;
+  background: #fff3;
+  border: none;
+  font-size: 19px;
+  color: #3870d0;
+  cursor: pointer;
+  border-radius: 8px;
+  padding: 2px 6px 1px 6px;
+  transition: background .12s;
+  display: flex;
+  align-items: center;
+}
+.why-icon[data-filled="yes"] {
+  color: #1a871a;
+  background: #ecf7ef;
+}
+.why-icon:hover {
+  background: #f2f6ff;
+}
+
+.top-right-tools {
+  position: absolute;
+  top: 14px;
+  right: 18px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  z-index: 13050;
+}
+
+#languageToggle,
+#helpBtn {
+  box-sizing: border-box; /* 🔥 sikrer ens størrelse */
+
+  width: 42px;
+  height: 42px;
+  min-width: 42px;
+  min-height: 42px;
+
+  border-radius: 50%;
+  border: 2px solid #253c7c;
+  background: #fff;
+  color: #253c7c;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-weight: 700;
+  cursor: pointer;
+
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+}
+
+/* Tekststørrelser */
+#languageToggle {
+  font-size: 14px;
+}
+
+#helpBtn {
+  font-size: 18px; /* lidt justeret så den matcher visuelt */
+}
+
+/* Hover */
+#languageToggle:hover,
+#helpBtn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.16);
+  background: #f4f7ff;
+}
+
+/* Focus */
+#languageToggle:focus,
+#helpBtn:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(37, 60, 124, 0.18);
+}
+
+.why-tree-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* === Hjælp-overlay (fiskeben + 5xWhy) === */
+#helpOverlay,
+#whyHelpOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(32,40,91,0.76);
+  z-index: 13051;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+}
+
+#helpOverlay.hidden,
+#whyHelpOverlay.hidden {
+  display: none;
+}
+
+#helpOverlay .help-content,
+#whyHelpOverlay .help-content {
+  background: #fff;
+  max-width: 510px;
+  margin-top: 70px;
+  padding: 28px 34px 24px 34px;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.2);
+  border-radius: 20px;
+  position: relative;
+}
+
+#helpOverlay .closeHelp,
+#whyHelpOverlay .closeHelp {
+  position: absolute;
+  right: 24px;
+  top: 14px;
+  font-size: 27px;
+  cursor: pointer;
+  color: #c23;
+  background: none;
+  border: none;
+}
+
+#helpOverlay .help-title,
+#whyHelpOverlay .help-title {
+  font-weight: bold;
+  font-size: 22px;
+  color: #253c7c;
+  text-align: center;
+  margin-bottom: 12px;
+}
+
+#helpOverlay ul,
+#whyHelpOverlay ul {
+  padding-left: 18px;
+}
+
+#helpOverlay .help-footer,
+#whyHelpOverlay .help-footer {
+  margin-top: 11px;
+  font-size: 15px;
+  color: #234c92;
+}
+
+/* 5xWhy-hjælp skal ligge OVER 5xWhy-popup/backdrop */
+#whyHelpOverlay {
+  z-index: 30000;
+}
+
+/* === Hjælp-knap i 5xWhy popup === */
+#whyHelpBtn {
+  border: none;
+  padding: 0;
+  z-index: 13050;
+  font-size: 32px;
+  cursor: pointer;
+  background: #fff7;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 1px 8px #aaa3;
+}
+#whyHelpBtn:hover {
+  background: #f2f6ff;
+}
+
+/* Skjulte elementer */
+.hidden {
+  display: none !important;
+}
+#loadProjectFile {
+  display: none;
+}
+
+/* === 5xWhy popup === */
+#whyTreeBackdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.35);
+  z-index: 24000;
+}
+#whyTreeBackdrop.hidden {
+  display: none;
+}
+
+#whyTreePopup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #fff;
+  border-radius: 12px;
+  border: 2px solid #2856a6;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+  z-index: 25000;
+  padding: 24px 28px 20px 28px;
+  width: 96vw;
+  max-width: none;
+  max-height: 90vh;
+  overflow: auto;
+}
+#whyTreePopup.hidden {
+  display: none;
+}
+
+.why-tree-inner {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.why-tree-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.why-tree-title {
+  font-weight: bold;
+  font-size: 20px;
+  color: #234c92;
+}
+
+.why-tree-close {
+  border: none;
+  background: none;
+  font-size: 26px;
+  cursor: pointer;
+  color: #c23;
+}
+
+#whyTreeCause {
+  font-size: 18px;
+  font-weight: bold;
+  color: #C32E32;
+  text-align: left;
+  border: 1px solid #f0b5b5;
+  border-radius: 8px;
+  padding: 8px 10px;
+  background: #fff8f8;
+}
+
+.why-tree-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+/* === 5xWhy node-stil === */
+.tree5why-tree {
+  margin: 8px 0 4px 0;
+  border-left: 3px solid #bdd2ee;
+  padding-left: 14px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.tree5why-node {
+  position: relative;
+  margin-bottom: 11px;
+  display: flex;
+  align-items: flex-start;
+  padding: 4px 2px;
+  border-radius: 7px;
+  transition: background 0.18s, box-shadow 0.18s;
+  background: #fff;
+}
+.tree5why-node.selected {
+  background: #e3f0ff;
+}
+.tree5why-node.selected-action {
+  background: #fff9c6;
+  box-shadow: 0 0 2px 1.5px #ffd80088;
+}
+
+.tree5why-left {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-right: 6px;
+  flex-shrink: 0;
+  min-width: 18px;
+}
+
+.tree5why-dot {
+  display: inline-block;
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: #bdd2ee;
+  vertical-align: middle;
+  box-shadow: 0 0 2px #619;
+  cursor: pointer;
+  transition: background 0.16s, border-color 0.16s, transform 0.1s;
+}
+.tree5why-dot:hover {
+  transform: scale(1.1);
+}
+.tree5why-dot.selected-action {
+  background: #ffe600;
+  border: 1.5px solid #e5a910;
+}
+
+.tree5why-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.tree5why-level {
+  font-size: 11px;
+  color: #555;
+  margin-bottom: 3px;
+  white-space: nowrap;
+}
+
+#whyTreePopup .tree5why-line {
+  flex-wrap: wrap;
+  width: auto;
+}
+
+#whyTreePopup .tree5why-btn {
+  white-space: nowrap;
+}
+
+.tree5why-textarea {
+  font-size: 18px;
+  flex: 0 0 auto;
+  width: 320px;
+  max-width: 320px;
+  border-radius: 8px;
+  border: 1px solid #8899cc;
+  padding: 10px 12px;
+  margin-bottom: 4px;
+  box-sizing: border-box;
+  resize: vertical;
+  min-height: 110px;
+  line-height: 1.5;
+  background: #f6f8ff;
+  font-family: inherit;
+  overflow: hidden;
+  max-height: none;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.tree5why-line > div {
+  flex-shrink: 0;
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+
+.tree5why-btn {
+  background: #ececec;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  font-size: 12px;
+  color: #234c92;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 28px;
+  padding: 0 10px;
+  line-height: 1;
+}
+
+.tree5why-btn.add {
+  font-weight: normal;
+}
+.tree5why-btn.add:hover {
+  background: #dde9ff;
+}
+
+.tree5why-btn.del {
+  color: #c23;
+  width: 28px;
+  padding: 0;
+}
+
+.tree5why-btn.del[disabled],
+.tree5why-btn.del[aria-disabled="true"] {
+  opacity: 0.53;
+  background: #ececec;
+  color: #aaa;
+  cursor: not-allowed;
+}
+
+.tree5why-btn.del[aria-disabled="false"]:hover {
+  background: #ffeaea;
+  color: #a53;
+}
+
+.tree5why-add-root {
+  margin: 11px 0 8px 8px;
+}
+
+.tree5why-children {
+  margin-left: 28px;
+  padding-left: 14px;
+  border-left: 2px solid #a5c3f2;
+  position: relative;
+}
+.tree5why-children::before {
+  content: "";
+  position: absolute;
+  left: -14px;
+  top: 10px;
+  width: 14px;
+  border-top: 2px solid #a5c3f2;
+}
+
+#whyTreePopup .tree5why-right {
+  width: auto;
+  max-width: 100%;
+}
+
+/* === Print / PDF base === */
+@media print {
+  .controls {
+    display: none !important;
+  }
+  .custom-popup,
+  #popup,
+  #problemBox,
+  .why-popup {
+    box-shadow: none !important;
+  }
+  body,
+  .container,
+  .diagram-container {
+    box-shadow: none !important;
+    background: #fff !important;
+    width: 1122px !important;
+    height: 793px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  .why-icon {
+    display: none !important;
+  }
+}
+
+@page {
+  size: A4 landscape;
+  margin: 10mm;
+}
