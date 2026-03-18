@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+  <meta charset="UTF-8">
+  <title id="pageTitle">Fiskeben ROPEX</title>
+  <meta name="viewport" content="width=1122, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css?v=20260210">
+</head>
+
+<body>
+  <!-- Hjælp-knap -->
+  <div class="top-right-tools">
+    <button id="languageToggle" type="button" title="Skift sprog">DK</button>
+    <div id="helpBtn" title="Få hjælp til at komme igang!">❓</div>
+  </div>
+
+  <!-- Hjælp-boks -->
+  <div id="helpOverlay" class="hidden">
+    <div class="help-content">
+      <button class="closeHelp" id="closeHelpBtn" title="Luk hjælp">&times;</button>
+      <div class="help-title" id="helpTitle">Hjælp til Fiskeben ROPEX</div>
+      <ul>
+        <li id="helpItem1">Klik hvor som helst på fiskebenet for at tilføje en årsag.</li>
+        <li id="helpItem2">Træk og slip for at flytte årsager.</li>
+        <li id="helpItem3">Dobbeltklik på en boks for at redigere.</li>
+        <li id="helpItem4">Klik på 5xWHY-ikonet for at lave en 5xWhy-træanalyse på en årsag.</li>
+        <li id="helpItem5">Du kan gemme og åbne projekter som .json-filer.</li>
+        <li id="helpItem6">“Gem alt som PDF” laver en PDF med diagram, 5xWhy-træer og M-liste.</li>
+      </ul>
+      <div class="help-footer" id="helpFooter">Tak fordi du bruger Fiskeben ROPEX!</div>
+    </div>
+  </div>
+
+  <h1 id="appTitle">Fiskeben ROPEX</h1>
+
+  <div class="container">
+    <div class="diagram-container" id="diagramArea">
+      <svg id="fishboneSvg" width="1122" height="793">
+        <g id="ishikawa"></g>
+      </svg>
+      <div id="causes"></div>
+
+      <div id="problemBox"
+           contenteditable="true"
+           data-placeholder="Problemet skrives her"
+           title="Skriv problemet her"
+           class="placeholder">
+      </div>
+    </div>
+
+    <div class="controls">
+      <button id="savePdfBtn">Gem alt som PDF</button>
+      <button id="saveProjectBtn">Gem projekt</button>
+
+      <input type="file" id="loadProjectFile" accept=".json">
+      <button id="openProjectBtn">Åbn projekt</button>
+    </div>
+
+  <div id="whyHelpOverlay" class="hidden">
+  <div class="help-content">
+    <button class="closeHelp" title="Luk hjælp">&times;</button>
+    <div class="help-title" id="whyHelpTitle">Hjælp til 5xWhy</div>
+    <ul>
+      <li id="whyHelpItem1">Start med den mest oplagte forklaring (Hvorfor 1).</li>
+      <li id="whyHelpItem2">Brug “+ Under-hvorfor” til at gå dybere (Hvorfor 1.1, 1.1.1 osv.).</li>
+      <li id="whyHelpItem3">Skriv kort og konkret i hver boks.</li>
+      <li id="whyHelpItem4">Stop når I har en årsag, I kan handle på (ikke nødvendigvis præcis 5).</li>
+      <li id="whyHelpItem5">Dot kan bruges til at markere den vigtigste gren.</li>
+    </ul>
+  </div>
+</div>
+
+  <!-- Tilføj årsag-popup -->
+  <div id="popup" class="custom-popup">
+    <input type="text" id="popupText" placeholder="Skriv årsag her">
+    <br>
+    <button id="addCauseBtn">Tilføj</button>
+    <button id="cancelCauseBtn">Annuller</button>
+  </div>
+
+  <!-- Ny 5xWhy-træ-popup -->
+  <div id="whyTreeBackdrop" class="hidden"></div>
+  <div id="whyTreePopup" class="why-popup hidden">
+    <div class="why-tree-inner">
+      <div class="why-tree-header">
+        <div class="why-tree-title" id="whyTreeTitle">5xWhy-træ for valgt årsag</div>
+
+        <div class="why-tree-header-actions">
+          <button id="whyHelpBtn" type="button" class="helpBtn" title="Hjælp">❓</button>
+          <button class="why-tree-close" type="button" title="Luk">×</button>
+        </div>
+      </div>
+
+
+      <div class="why-cause" id="whyTreeCause"></div>
+
+      <div id="tree5whyRoot" class="tree5why-tree"></div>
+
+      <button class="tree5why-btn add tree5why-add-root" id="addRootWhyBtn">+ Tilføj hvorfor (øverste niveau)</button>
+
+      <div class="why-tree-footer">
+        <button class="tree5why-btn" id="whyTreeSaveBtn">Gem & luk</button>
+        <button class="tree5why-btn" id="whyTreeCancelBtn">Luk uden at gemme</button>
+      </div>
+    </div>
+  </div>
+
+<!-- PDF bibliotek -->
+<script src="html2pdf.bundle.min.js"></script>
+
+<!-- Din kode -->
+<script src="script.js?v=20260210"></script>
+</body>
+</html>
