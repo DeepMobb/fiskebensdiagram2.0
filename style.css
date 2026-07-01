@@ -1,35 +1,201 @@
-/* === Global styling === */
+/* ==========================================================
+   ROPEX / ROCKWOOL værktøjsstandard
+   - Rød topbar
+   - Lys sidebaggrund
+   - Hvide cards med blød skygge
+   - Blå primærknap + lyse sekundære knapper
+   - Ens modals og tabeller
+   Dette kan genbruges på tværs af de andre værktøjer.
+   ========================================================== */
+
+:root {
+  --rw-red: #e30613;
+  --rw-red-dark: #c90511;
+  --rw-blue: #294a9b;
+  --rw-blue-dark: #1f3b8c;
+  --rw-blue-soft: #edf3ff;
+  --rw-ink: #20375c;
+  --rw-text: #24364f;
+  --rw-muted: #6c7a90;
+  --rw-bg: #eef2f5;
+  --rw-card: #ffffff;
+  --rw-line: #d9e0ea;
+  --rw-shadow: 0 10px 28px rgba(20, 38, 74, 0.10);
+  --rw-shadow-soft: 0 4px 14px rgba(20, 38, 74, 0.08);
+  --rw-radius: 16px;
+}
+
+* { box-sizing: border-box; }
+
 body {
   font-family: Arial, sans-serif;
-  background: #f4f4f4;
+  background: #f4f6f8;
+  color: #1f2933;
   margin: 0;
   padding: 0;
 }
 
-h1 {
+/* === ROCKWOOL-lignende topbar, kun med aktive værktøjsknapper === */
+.app-header {
+  background: var(--rw-red);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.16);
+  position: sticky;
+  top: 0;
+  z-index: 12000;
+}
+
+.app-header-inner {
+  width: 100%;
+  min-height: 56px;
+  padding: 6px 16px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.brand-block {
+  display: flex;
+  align-items: center;
+  flex: 0 0 auto;
+}
+
+.brand-mark {
+  color: #fff;
+  font-size: 25px;
+  font-weight: 800;
+  letter-spacing: 0.2px;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.header-nav,
+.top-right-tools {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.header-nav {
+  flex: 0 0 auto;
+  margin-left: 14px;
+}
+
+.top-right-tools {
+  flex: 1 1 auto;
+  justify-content: flex-end;
+  min-width: 0;
+}
+
+.header-nav-item,
+#languageToggle,
+#helpBtn {
+  appearance: none;
+  height: 38px;
+  border: 1px solid rgba(255,255,255,0.48);
+  border-radius: 5px;
+  background: transparent;
+  color: #fff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 14px;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+  transition: background .12s ease, border-color .12s ease;
+}
+
+.header-nav-item:hover,
+#languageToggle:hover,
+#helpBtn:hover {
+  background: rgba(255,255,255,0.16);
+  border-color: rgba(255,255,255,0.75);
+}
+
+.header-nav-item.active {
+  background: rgba(255,255,255,0.22);
+  border-color: rgba(255,255,255,0.85);
+}
+
+#languageToggle,
+#helpBtn {
+  width: 42px;
+  min-width: 42px;
+  padding: 0;
+  background: #fff;
+  color: var(--rw-red);
+  border-color: #fff;
+  border-radius: 9px;
+  font-weight: 800;
+}
+
+#helpBtn {
+  font-size: 20px;
+}
+
+@media (max-width: 760px) {
+  .app-header-inner {
+    overflow-x: auto;
+  }
+
+  .top-right-tools {
+    flex: 0 0 auto;
+  }
+}
+
+.page-shell {
+  max-width: 1260px;
+  margin: 0 auto;
+  padding: 42px 22px 36px 22px;
+}
+
+.page-intro {
   text-align: center;
-  margin-top: 20px;
-  font-size: 2em;
-  color: #283c6c;
+  margin-bottom: 26px;
+}
+
+.page-kicker {
+  color: var(--rw-red);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 1.3px;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+h1 {
+  margin: 0;
+  font-size: 44px;
+  line-height: 1.1;
+  color: #202733;
+  font-weight: 800;
+}
+
+.page-subtitle {
+  margin: 10px 0 0 0;
+  font-size: 18px;
+  color: var(--rw-muted);
 }
 
 .container {
   max-width: 1190px;
-  margin: 25px auto;
-  background: #fff;
-  border-radius: 10px;
-  padding: 6px;
-  box-shadow: 0 4px 24px rgba(0,0,0,0.13);
+  margin: 0 auto;
+  background: var(--rw-card);
+  border: 1px solid #e2e6ec;
+  border-radius: 6px;
+  padding: 18px 18px 14px 18px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
 }
 
 .diagram-container {
   position: relative;
   width: 1122px;
   height: 793px;
-  background: #fff;
-  border: 1.1px solid #eee;
+  background: #fbfcfe;
+  border: 1px solid #dfe5ee;
+  border-radius: 14px;
   margin: 0 auto;
-  box-sizing: border-box;
   overflow: hidden;
   padding: 0;
   cursor: crosshair;
@@ -49,64 +215,84 @@ h1 {
   font-size: 15px;
 }
 
-.controls button {
+.controls button,
+.category-popup-actions button,
+#addActionRowBtn,
+.custom-popup button,
+.standalone-help-btn {
   appearance: none;
   border: 1px solid transparent;
   border-radius: 12px;
   padding: 10px 16px;
-  font-size: 16px;
-  font-weight: 600;
+  font-size: 15px;
+  font-weight: 700;
   line-height: 1;
-  letter-spacing: 0.2px;
+  letter-spacing: 0.15px;
   cursor: pointer;
+  min-height: 42px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  vertical-align: middle;
   transition: transform .08s ease, box-shadow .18s ease, background .18s ease, border-color .18s ease;
 }
 
-#savePdfBtn {
-  background: #2e4bb8;
+#savePdfBtn,
+#categorySaveBtn,
+#addCauseBtn,
+#whyTreeSaveBtn {
+  background: var(--rw-blue);
   color: #fff;
-  border-color: #2e4bb8;
-  box-shadow: 0 8px 18px rgba(46, 75, 184, 0.25);
+  border-color: var(--rw-blue);
+  box-shadow: 0 8px 18px rgba(41, 74, 155, 0.22);
 }
-#savePdfBtn:hover {
-  background: #2945ad;
-  box-shadow: 0 10px 24px rgba(46, 75, 184, 0.32);
-}
-#savePdfBtn:active {
-  transform: translateY(1px);
-  box-shadow: 0 6px 14px rgba(46, 75, 184, 0.25);
-}
-#savePdfBtn:focus-visible {
-  outline: 3px solid #9bb4ff;
-  outline-offset: 2px;
+
+#savePdfBtn:hover,
+#categorySaveBtn:hover,
+#addCauseBtn:hover,
+#whyTreeSaveBtn:hover {
+  background: var(--rw-blue-dark);
+  border-color: var(--rw-blue-dark);
 }
 
 #showWhyBtn,
 #saveProjectBtn,
-#openProjectBtn {
-  background: #f4f7ff;
-  color: #1f3b8c;
-  border-color: #dde6ff;
-  box-shadow: 0 3px 10px rgba(31, 59, 140, 0.08);
+#undoBtn,
+#categorySettingsBtn,
+#openProjectBtn,
+#addActionRowBtn,
+#whyTreeCancelBtn,
+#categoryCancelBtn {
+  background: #f7f9fc;
+  color: var(--rw-blue-dark);
+  border-color: #d8e1ef;
+  box-shadow: var(--rw-shadow-soft);
 }
+
 #showWhyBtn:hover,
 #saveProjectBtn:hover,
-#openProjectBtn:hover {
-  background: #edf3ff;
-  border-color: #cfdcff;
-  box-shadow: 0 6px 16px rgba(31, 59, 140, 0.12);
+#undoBtn:hover,
+#categorySettingsBtn:hover,
+#openProjectBtn:hover,
+#addActionRowBtn:hover,
+#whyTreeCancelBtn:hover,
+#categoryCancelBtn:hover {
+  background: var(--rw-blue-soft);
+  border-color: #cbd8f1;
 }
-#showWhyBtn:active,
-#saveProjectBtn:active,
-#openProjectBtn:active {
+
+#categoryResetBtn,
+#cancelCauseBtn {
+  background: #fff4f4;
+  color: #b4232c;
+  border-color: #f2c7cb;
+}
+
+.controls button:active,
+.category-popup-actions button:active,
+#addActionRowBtn:active,
+.custom-popup button:active {
   transform: translateY(1px);
-  box-shadow: 0 4px 12px rgba(31, 59, 140, 0.1);
-}
-#showWhyBtn:focus-visible,
-#saveProjectBtn:focus-visible,
-#openProjectBtn:focus-visible {
-  outline: 3px solid #a7c2ff;
-  outline-offset: 2px;
 }
 
 .controls button:disabled {
@@ -116,12 +302,6 @@ h1 {
   box-shadow: none;
 }
 
-.controls > span {
-  color: #5f6b86;
-  font-size: 15px;
-}
-
-/* === Problem-boks === */
 #problemBox {
   position: absolute;
   left: 825px;
@@ -135,76 +315,171 @@ h1 {
   align-items: center;
   justify-content: center;
   padding: 12px 14px;
-  color: crimson;
+  color: var(--rw-red);
   background: #fff;
-  border: 2.5px solid crimson;
-  border-radius: 9px;
+  border: 2px solid var(--rw-red);
+  border-radius: 12px;
   font-size: 22px;
   font-weight: bold;
   text-align: center;
   z-index: 999;
   outline: none;
-  box-sizing: border-box;
   resize: vertical;
   word-break: break-word;
   white-space: pre-wrap;
   overflow-wrap: break-word;
   transition: color 0.2s;
 }
-#problemBox.placeholder {
-  color: #c4a6a6;
+#problemBox.placeholder { color: #c4a6a6; }
+
+#categoryPopupBackdrop,
+#whyTreeBackdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(23, 34, 59, 0.42);
+  z-index: 21000;
 }
 
-/* === Tilføj årsag-popup === */
+.category-popup,
+#whyTreePopup,
+.custom-popup {
+  background: #fff;
+  border: 1px solid #cfd8e8;
+  border-radius: 18px;
+  box-shadow: 0 18px 48px rgba(16, 30, 61, 0.22);
+}
+
+.category-popup {
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 430px;
+  max-width: calc(100vw - 32px);
+  z-index: 22000;
+  padding: 18px 20px 20px 20px;
+}
+
+.category-popup-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.category-popup-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--rw-ink);
+}
+
+#categoryPopupCloseBtn,
+.why-tree-close,
+#helpOverlay .closeHelp,
+#whyHelpOverlay .closeHelp {
+  border: none;
+  background: #fff4f4;
+  color: #b4232c;
+  font-size: 28px;
+  line-height: 1;
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.category-count-label {
+  display: block;
+  font-weight: 700;
+  color: var(--rw-ink);
+  margin-bottom: 5px;
+}
+
+#categoryCountInput,
+.category-name-input,
+.custom-popup input,
+.tree5why-textarea,
+.action-cell-input {
+  border: 1px solid #c7d2e3;
+  border-radius: 10px;
+  outline: none;
+  transition: border-color .15s ease, box-shadow .15s ease, background .15s ease;
+}
+
+#categoryCountInput:focus,
+.category-name-input:focus,
+.custom-popup input:focus,
+.tree5why-textarea:focus,
+.action-cell-input:focus {
+  border-color: #7da0e6;
+  box-shadow: 0 0 0 3px rgba(41, 74, 155, 0.12);
+}
+
+#categoryCountInput {
+  width: 92px;
+  font-size: 17px;
+  padding: 7px 8px;
+  margin-bottom: 12px;
+}
+
+.category-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.category-field-row {
+  display: grid;
+  grid-template-columns: 72px 1fr;
+  align-items: center;
+  gap: 8px;
+  font-size: 15px;
+  color: var(--rw-ink);
+}
+
+.category-name-input {
+  font-size: 16px;
+  padding: 8px 10px;
+}
+
+.category-popup-actions {
+  display: flex;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
 .custom-popup {
   display: none;
   position: fixed;
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
-  background: #fff;
-  border: 2px solid #2a4b7c;
-  padding: 11px 18px 13px 18px;
+  padding: 16px 18px 18px 18px;
   z-index: 20000;
-  border-radius: 8px;
-  min-width: 250px;
-  box-shadow: 0 6px 20px rgba(60,60,80,0.15);
+  min-width: 290px;
   text-align: center;
 }
+
 .custom-popup input {
-  font-size: 20px;
-  padding: 7px;
-  margin-bottom: 11px;
-  width: 92%;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-}
-.custom-popup button {
   font-size: 18px;
-  margin: 0 4px;
-  padding: 7px 18px;
-  border-radius: 6px;
-  border: none;
-  background: #2a4b7c;
-  color: #fff;
-  cursor: pointer;
-}
-.custom-popup button:last-child {
-  background: #c32e32;
+  padding: 10px 12px;
+  margin-bottom: 12px;
+  width: 100%;
 }
 
-/* === Redigering af årsag === */
 .edit-cause-input {
   position: absolute;
   z-index: 20000;
-  font-size: 19px;
+  font-size: 18px;
   font-weight: bold;
-  color: #2a4b7c;
-  background: #fff9e4;
-  border: 1px solid #a8a7a7;
-  border-radius: 7px;
-  padding: 6px;
-  box-sizing: border-box;
+  color: var(--rw-ink);
+  background: #f8fbff;
+  border: 1px solid #c7d2e3;
+  border-radius: 10px;
+  padding: 8px;
   line-height: 1.4;
   overflow-wrap: break-word;
   white-space: pre-wrap;
@@ -212,25 +487,23 @@ h1 {
   outline: none;
 }
 .edit-cause-input:focus {
-  border-color: #3870d0;
-  box-shadow: 0 0 4px rgba(56, 112, 208, 0.5);
-  background: #fffceb;
+  border-color: #7da0e6;
+  box-shadow: 0 0 0 3px rgba(41, 74, 155, 0.12);
 }
 
-/* === Årsagsbokse === */
 .causeBox {
   position: absolute;
   min-width: 150px;
   width: 220px;
   max-width: 500px;
-  font-size: 19px;
+  font-size: 18px;
   line-height: 1.4;
-  color: #2a4b7c;
+  color: var(--rw-ink);
   font-weight: bold;
-  background: #fff9e4;
-  padding: 28px 6px 6px 6px;
-  border: 1px solid #a8a7a7;
-  border-radius: 7px;
+  background: #f8fbff;
+  padding: 28px 8px 8px 8px;
+  border: 1px solid #c7d2e3;
+  border-radius: 10px;
   display: block;
   text-align: left;
   cursor: move;
@@ -241,14 +514,15 @@ h1 {
   max-height: 420px;
   overflow-y: auto;
   resize: both;
-  box-sizing: border-box;
   z-index: 20;
-  transition: box-shadow .13s;
+  transition: box-shadow .13s, border-color .13s;
+  box-shadow: 0 2px 9px rgba(33, 44, 77, 0.08);
 }
+.causeBox:hover { box-shadow: 0 6px 18px rgba(33, 44, 77, 0.14); }
 .causeBox.editing {
-  color: #dd5050;
-  background: #fff9e0;
-  border: 1px dotted #333;
+  color: var(--rw-ink);
+  background: #f8fbff;
+  border: 1px dashed #7da0e6;
   cursor: text;
   user-select: text;
 }
@@ -257,20 +531,38 @@ h1 {
   white-space: pre-wrap;
 }
 
-/* === 5xWHY-ikon på boks === */
+.delete-cause-btn {
+  position: absolute;
+  top: 5px;
+  left: 6px;
+  z-index: 31;
+  width: 24px;
+  height: 24px;
+  border: none;
+  border-radius: 50%;
+  background: #fde4e5;
+  color: #c32e32;
+  font-size: 20px;
+  font-weight: bold;
+  line-height: 22px;
+  text-align: center;
+  cursor: pointer;
+  padding: 0;
+}
+.delete-cause-btn:hover { background: #f8cfd2; }
+
 .why-icon {
   position: absolute;
   top: 4px;
   right: 6px;
   z-index: 30;
-  background: #fff3;
+  background: #f2f6ff;
   border: none;
-  font-size: 19px;
+  font-size: 18px;
   color: #3870d0;
   cursor: pointer;
   border-radius: 8px;
   padding: 2px 6px 1px 6px;
-  transition: background .12s;
   display: flex;
   align-items: center;
 }
@@ -278,67 +570,45 @@ h1 {
   color: #1a871a;
   background: #ecf7ef;
 }
-.why-icon:hover {
-  background: #f2f6ff;
-}
+.why-icon:hover { background: #e7efff; }
 
 .top-right-tools {
-  position: absolute;
-  top: 14px;
-  right: 18px;
   display: flex;
   align-items: center;
   gap: 10px;
-  z-index: 13050;
+  flex-shrink: 0;
 }
 
 #languageToggle,
 #helpBtn {
-  box-sizing: border-box; /* 🔥 sikrer ens størrelse */
-
   width: 42px;
   height: 42px;
   min-width: 42px;
   min-height: 42px;
-
-  border-radius: 50%;
-  border: 2px solid #253c7c;
+  border-radius: 11px;
+  border: 1px solid rgba(255,255,255,0.78);
   background: #fff;
-  color: #253c7c;
-
+  color: var(--rw-red);
   display: flex;
   align-items: center;
   justify-content: center;
-
-  font-weight: 700;
+  font-weight: 800;
   cursor: pointer;
-
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 3px 10px rgba(0,0,0,0.12);
   transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
 }
-
-/* Tekststørrelser */
-#languageToggle {
-  font-size: 14px;
-}
-
-#helpBtn {
-  font-size: 18px; /* lidt justeret så den matcher visuelt */
-}
-
-/* Hover */
+#languageToggle { font-size: 14px; }
+#helpBtn { font-size: 18px; }
 #languageToggle:hover,
 #helpBtn:hover {
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.16);
-  background: #f4f7ff;
+  background: #fff5f6;
+  box-shadow: 0 5px 14px rgba(0,0,0,0.16);
 }
-
-/* Focus */
 #languageToggle:focus,
 #helpBtn:focus {
   outline: none;
-  box-shadow: 0 0 0 3px rgba(37, 60, 124, 0.18);
+  box-shadow: 0 0 0 3px rgba(255,255,255,0.35), 0 3px 10px rgba(0,0,0,0.12);
 }
 
 .why-tree-header-actions {
@@ -347,7 +617,6 @@ h1 {
   gap: 10px;
 }
 
-/* === Hjælp-overlay (fiskeben + 5xWhy) === */
 #helpOverlay,
 #whyHelpOverlay {
   position: fixed;
@@ -361,19 +630,22 @@ h1 {
   align-items: flex-start;
   justify-content: center;
 }
-
 #helpOverlay.hidden,
-#whyHelpOverlay.hidden {
-  display: none;
+#whyHelpOverlay.hidden,
+#whyTreeBackdrop.hidden,
+#categoryPopupBackdrop.hidden,
+#whyTreePopup.hidden,
+.hidden {
+  display: none !important;
 }
 
 #helpOverlay .help-content,
 #whyHelpOverlay .help-content {
   background: #fff;
-  max-width: 510px;
+  max-width: 530px;
   margin-top: 70px;
   padding: 28px 34px 24px 34px;
-  box-shadow: 0 8px 40px rgba(0,0,0,0.2);
+  box-shadow: 0 18px 48px rgba(15, 28, 56, 0.28);
   border-radius: 20px;
   position: relative;
 }
@@ -381,20 +653,15 @@ h1 {
 #helpOverlay .closeHelp,
 #whyHelpOverlay .closeHelp {
   position: absolute;
-  right: 24px;
+  right: 20px;
   top: 14px;
-  font-size: 27px;
-  cursor: pointer;
-  color: #c23;
-  background: none;
-  border: none;
 }
 
 #helpOverlay .help-title,
 #whyHelpOverlay .help-title {
   font-weight: bold;
   font-size: 22px;
-  color: #253c7c;
+  color: var(--rw-ink);
   text-align: center;
   margin-bottom: 12px;
 }
@@ -402,77 +669,46 @@ h1 {
 #helpOverlay ul,
 #whyHelpOverlay ul {
   padding-left: 18px;
+  line-height: 1.6;
 }
 
 #helpOverlay .help-footer,
 #whyHelpOverlay .help-footer {
   margin-top: 11px;
   font-size: 15px;
-  color: #234c92;
+  color: var(--rw-blue);
 }
 
-/* 5xWhy-hjælp skal ligge OVER 5xWhy-popup/backdrop */
-#whyHelpOverlay {
-  z-index: 30000;
-}
+#whyHelpOverlay { z-index: 30000; }
 
-/* === Hjælp-knap i 5xWhy popup === */
 #whyHelpBtn {
-  border: none;
+  border: 1px solid #dbe4f1;
   padding: 0;
-  z-index: 13050;
-  font-size: 32px;
+  font-size: 20px;
   cursor: pointer;
-  background: #fff7;
-  border-radius: 50%;
-  width: 36px;
-  height: 36px;
+  background: #f8fafc;
+  border-radius: 10px;
+  width: 38px;
+  height: 38px;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 1px 8px #aaa3;
 }
-#whyHelpBtn:hover {
-  background: #f2f6ff;
-}
+#whyHelpBtn:hover { background: var(--rw-blue-soft); }
 
-/* Skjulte elementer */
-.hidden {
-  display: none !important;
-}
-#loadProjectFile {
-  display: none;
-}
-
-/* === 5xWhy popup === */
-#whyTreeBackdrop {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.35);
-  z-index: 24000;
-}
-#whyTreeBackdrop.hidden {
-  display: none;
-}
+#loadProjectFile { display: none; }
 
 #whyTreePopup {
   position: fixed;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  background: #fff;
-  border-radius: 12px;
-  border: 2px solid #2856a6;
-  box-shadow: 0 10px 40px rgba(0,0,0,0.3);
   z-index: 25000;
   padding: 24px 28px 20px 28px;
   width: 96vw;
   max-width: none;
   max-height: 90vh;
   overflow: auto;
-}
-#whyTreePopup.hidden {
-  display: none;
 }
 
 .why-tree-inner {
@@ -490,26 +726,18 @@ h1 {
 
 .why-tree-title {
   font-weight: bold;
-  font-size: 20px;
-  color: #234c92;
-}
-
-.why-tree-close {
-  border: none;
-  background: none;
-  font-size: 26px;
-  cursor: pointer;
-  color: #c23;
+  font-size: 22px;
+  color: var(--rw-ink);
 }
 
 #whyTreeCause {
   font-size: 18px;
   font-weight: bold;
-  color: #C32E32;
+  color: var(--rw-red);
   text-align: left;
-  border: 1px solid #f0b5b5;
-  border-radius: 8px;
-  padding: 8px 10px;
+  border: 1px solid #f2c6ca;
+  border-radius: 10px;
+  padding: 10px 12px;
   background: #fff8f8;
 }
 
@@ -520,13 +748,11 @@ h1 {
   margin-top: 6px;
 }
 
-/* === 5xWhy node-stil === */
 .tree5why-tree {
   margin: 8px 0 4px 0;
   border-left: 3px solid #bdd2ee;
   padding-left: 14px;
   width: 100%;
-  box-sizing: border-box;
 }
 
 .tree5why-node {
@@ -539,9 +765,7 @@ h1 {
   transition: background 0.18s, box-shadow 0.18s;
   background: #fff;
 }
-.tree5why-node.selected {
-  background: #e3f0ff;
-}
+.tree5why-node.selected { background: #e3f0ff; }
 .tree5why-node.selected-action {
   background: #fff9c6;
   box-shadow: 0 0 2px 1.5px #ffd80088;
@@ -567,9 +791,7 @@ h1 {
   cursor: pointer;
   transition: background 0.16s, border-color 0.16s, transform 0.1s;
 }
-.tree5why-dot:hover {
-  transform: scale(1.1);
-}
+.tree5why-dot:hover { transform: scale(1.1); }
 .tree5why-dot.selected-action {
   background: #ffe600;
   border: 1.5px solid #e5a910;
@@ -592,21 +814,15 @@ h1 {
   flex-wrap: wrap;
   width: auto;
 }
-
-#whyTreePopup .tree5why-btn {
-  white-space: nowrap;
-}
+#whyTreePopup .tree5why-btn { white-space: nowrap; }
 
 .tree5why-textarea {
   font-size: 18px;
   flex: 0 0 auto;
   width: 320px;
   max-width: 320px;
-  border-radius: 8px;
-  border: 1px solid #8899cc;
   padding: 10px 12px;
   margin-bottom: 4px;
-  box-sizing: border-box;
   resize: vertical;
   min-height: 110px;
   line-height: 1.5;
@@ -627,33 +843,26 @@ h1 {
 }
 
 .tree5why-btn {
-  background: #ececec;
-  border-radius: 4px;
-  border: 1px solid #ccc;
+  background: #f6f8fb;
+  border-radius: 8px;
+  border: 1px solid #cfd8e8;
   font-size: 12px;
-  color: #234c92;
+  font-weight: 700;
+  color: var(--rw-blue-dark);
   cursor: pointer;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  height: 28px;
+  height: 30px;
   padding: 0 10px;
   line-height: 1;
 }
-
-.tree5why-btn.add {
-  font-weight: normal;
-}
-.tree5why-btn.add:hover {
-  background: #dde9ff;
-}
-
+.tree5why-btn.add:hover { background: #dde9ff; }
 .tree5why-btn.del {
   color: #c23;
-  width: 28px;
+  width: 30px;
   padding: 0;
 }
-
 .tree5why-btn.del[disabled],
 .tree5why-btn.del[aria-disabled="true"] {
   opacity: 0.53;
@@ -661,15 +870,12 @@ h1 {
   color: #aaa;
   cursor: not-allowed;
 }
-
 .tree5why-btn.del[aria-disabled="false"]:hover {
   background: #ffeaea;
   color: #a53;
 }
 
-.tree5why-add-root {
-  margin: 11px 0 8px 8px;
-}
+.tree5why-add-root { margin: 11px 0 8px 8px; }
 
 .tree5why-children {
   margin-left: 28px;
@@ -685,19 +891,312 @@ h1 {
   width: 14px;
   border-top: 2px solid #a5c3f2;
 }
-
 #whyTreePopup .tree5why-right {
   width: auto;
   max-width: 100%;
 }
 
-/* === Print / PDF base === */
+.action-table-section {
+  width: 1122px;
+  margin: 18px auto 8px auto;
+  padding: 18px 0 6px 0;
+  border-top: 1px solid #e2e8f0;
+}
+
+.action-table-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 4px 0 10px 0;
+}
+
+.action-table-header h2 {
+  margin: 0;
+  font-size: 24px;
+  color: var(--rw-ink);
+}
+
+.action-table-wrap {
+  width: 100%;
+  overflow-x: auto;
+  border: 1px solid #d8dee8;
+  border-radius: 14px;
+  background: #fff;
+}
+
+#actionTable {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+  background: #fff;
+  font-size: 15px;
+}
+
+#actionTable th,
+#actionTable td {
+  border: 1px solid #d8dee8;
+  padding: 0;
+  vertical-align: top;
+}
+
+#actionTable th {
+  background: var(--rw-ink);
+  color: #fff;
+  font-weight: 700;
+  text-align: center;
+  padding: 12px 8px;
+}
+
+#actionTable th:nth-child(1) { width: 130px; }
+#actionTable th:nth-child(2) { width: auto; }
+#actionTable th:nth-child(3) { width: 180px; }
+#actionTable th:nth-child(4) { width: 170px; }
+#actionTable th:nth-child(5) { width: 54px; }
+
+.action-cell-input {
+  width: 100%;
+  min-height: 42px;
+  border: none;
+  padding: 10px 10px;
+  font: inherit;
+  color: #222;
+  background: #fff;
+  resize: vertical;
+}
+.action-cell-input:focus {
+  background: #f8fbff;
+  box-shadow: inset 0 0 0 2px rgba(46, 75, 184, 0.18);
+}
+.action-date-input,
+.action-who-input,
+.action-ropex-input {
+  resize: none;
+  overflow: hidden;
+}
+
+.action-delete-cell {
+  text-align: center;
+  vertical-align: middle !important;
+  padding: 6px !important;
+}
+
+.delete-action-row-btn {
+  width: 30px;
+  height: 30px;
+  border: none;
+  border-radius: 50%;
+  background: #fde4e5;
+  color: #c32e32;
+  font-size: 21px;
+  font-weight: bold;
+  line-height: 28px;
+  cursor: pointer;
+  padding: 0;
+}
+.delete-action-row-btn:hover { background: #f8cfd2; }
+
+
+/* === Sidevisninger === */
+.tool-page.hidden {
+  display: none !important;
+}
+
+.standalone-why-panel {
+  width: 1122px;
+  min-height: 560px;
+  margin: 0 auto;
+  padding: 28px 34px 24px 34px;
+  background: #fbfcfe;
+  border: 1px solid #dfe5ee;
+  border-radius: 14px;
+}
+
+.standalone-why-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+  margin-bottom: 18px;
+  border-bottom: 1px solid #e3e9f2;
+  padding-bottom: 14px;
+}
+
+.standalone-kicker {
+  color: var(--rw-red);
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  margin-bottom: 5px;
+}
+
+#standaloneWhyHeading {
+  margin: 0;
+  color: var(--rw-ink);
+  font-size: 32px;
+  line-height: 1.1;
+}
+
+.standalone-help-btn {
+  width: 42px;
+  height: 42px;
+  min-width: 42px;
+  padding: 0;
+  border-radius: 12px;
+  background: #fff;
+  color: var(--rw-red);
+  border-color: #f2c7cb;
+  box-shadow: var(--rw-shadow-soft);
+}
+
+.standalone-help-btn:hover {
+  background: #fff5f6;
+}
+
+.standalone-title-label {
+  display: block;
+  color: var(--rw-ink);
+  font-weight: 800;
+  margin: 4px 0 7px 0;
+}
+
+.standalone-title-input {
+  width: 100%;
+  min-height: 58px;
+  padding: 13px 15px;
+  background: #fff;
+  border: 1px solid #c7d2e3;
+  border-radius: 12px;
+  color: var(--rw-ink);
+  font-size: 22px;
+  font-weight: 800;
+  line-height: 1.25;
+  outline: none;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.standalone-title-input.placeholder {
+  color: #98a3b5;
+  font-weight: 700;
+}
+
+.standalone-title-input:focus {
+  border-color: #7da0e6;
+  box-shadow: 0 0 0 3px rgba(41, 74, 155, 0.12);
+}
+
+.standalone-tree {
+  width: 100%;
+  min-height: 300px;
+  margin-top: 22px;
+  background: #fff;
+  border: 1px solid #e1e7f0;
+  border-radius: 12px;
+  padding: 18px 16px;
+}
+
+.standalone-tree:empty::before {
+  content: "Tilføj første hvorfor for at starte analysen.";
+  color: #7b8799;
+  font-size: 16px;
+}
+
+/* Kontrolknapperne ligger fælles under både Fiskeben og 5xWhy */
+.container > .controls {
+  border-top: 1px solid #e2e8f0;
+  padding-top: 16px;
+}
+
+/* Ens størrelse på knapper i topbar og kontrolrækker */
+.controls button {
+  height: 42px;
+  align-self: center;
+}
+
+#savePdfBtn,
+#whySavePdfBtn {
+  height: 42px;
+}
+
+#languageToggle,
+#helpBtn {
+  height: 42px;
+  width: 42px;
+}
+
+@media (max-width: 1220px) {
+  .page-shell {
+    overflow-x: auto;
+  }
+}
+
+
+/* === Farvejustering: ingen gule redigeringsfelter === */
+.causeBox {
+  background: #f8fbff;
+  border-color: #c7d2e3;
+}
+
+.causeBox.editing,
+.edit-cause-input,
+.action-cell-input:focus {
+  background: #f8fbff;
+}
+
+.action-cell-input:focus {
+  box-shadow: inset 0 0 0 2px rgba(41, 74, 155, 0.16);
+}
+
+.tree5why-textarea {
+  background: #f8fbff;
+}
+
+.tree5why-node.selected-action {
+  background: #edf3ff;
+  box-shadow: 0 0 2px 1.5px rgba(41, 74, 155, 0.22);
+}
+
+.tree5why-dot.selected-action {
+  background: var(--rw-red);
+  border: 1.5px solid var(--rw-red-dark);
+}
+
+
+/* Vis ROPEX-introduktionen over værktøjet */
+.page-intro {
+  display: block !important;
+  text-align: center;
+  margin: 18px 0 20px 0;
+}
+
+.page-kicker {
+  color: var(--rw-red);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 1.3px;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.page-subtitle {
+  margin: 0;
+  font-size: 18px;
+  color: var(--rw-muted);
+}
+
 @media print {
-  .controls {
+  .app-header,
+  .page-intro,
+  .controls,
+  .top-right-tools {
     display: none !important;
   }
   .custom-popup,
   #popup,
+  #categoryPopup,
+  #categoryPopupBackdrop,
   #problemBox,
   .why-popup {
     box-shadow: none !important;
@@ -711,13 +1210,135 @@ h1 {
     height: 793px !important;
     margin: 0 !important;
     padding: 0 !important;
+    border: none !important;
   }
-  .why-icon {
-    display: none !important;
-  }
+  .why-icon,
+  .delete-cause-btn { display: none !important; }
 }
 
 @page {
   size: A4 landscape;
   margin: 10mm;
+}
+
+
+/* PDF-sider bygges som faste 1122 x 793 px blokke.
+   De stables i én wrapper, så html2pdf deler dem ved sidehøjden ligesom i den gamle, stabile version. */
+.pdf-page {
+  width: 1122px;
+  height: 793px;
+  overflow: hidden;
+  background: #fff;
+}
+
+/* 5xWhy kan blive bred ved mange undergrene. Derfor får området sin egen scroll,
+   så bokse ikke falder ud over siden i appen. PDF'en skalerer træet ned til én side. */
+.standalone-tree {
+  overflow: auto;
+  max-width: 100%;
+}
+
+.standalone-tree > .tree5why-node {
+  min-width: max-content;
+}
+
+#whyTreePopup .tree5why-tree {
+  overflow: auto;
+}
+
+
+/* === Sidste UI-justeringer === */
+.page-shell {
+  padding-top: 22px;
+}
+
+/* Tilføj opgave-knappen er synlig igen */
+#addActionRowBtn {
+  display: inline-flex !important;
+}
+
+.action-date-input {
+  min-height: 42px;
+  height: 42px;
+  resize: none;
+  cursor: pointer;
+}
+
+/* Lysegrå årsagsbokse som matcher den anden brugerflade bedre */
+.causeBox,
+.edit-cause-input {
+  background: #f2f3f5 !important;
+  border-color: #cfd4dc !important;
+}
+
+.causeBox.editing {
+  background: #f2f3f5 !important;
+  border-color: #9aa7b8 !important;
+}
+
+.causeBox:hover {
+  box-shadow: 0 3px 10px rgba(0,0,0,0.12);
+}
+
+/* Mere system-/ROCKWOOL-agtige knapper under værktøjet */
+.controls {
+  gap: 6px;
+  padding-top: 8px;
+}
+
+.controls button,
+.category-popup-actions button,
+#addActionRowBtn,
+.custom-popup button,
+.standalone-help-btn {
+  border-radius: 5px;
+  min-height: 38px;
+  padding: 0 14px;
+  font-size: 14px;
+  box-shadow: none;
+}
+
+#savePdfBtn {
+  background: var(--rw-red);
+  border-color: var(--rw-red);
+  color: #fff;
+}
+
+#savePdfBtn:hover {
+  background: var(--rw-red-dark);
+  border-color: var(--rw-red-dark);
+}
+
+#saveProjectBtn,
+#undoBtn,
+#categorySettingsBtn,
+#openProjectBtn,
+#addActionRowBtn,
+#whyTreeCancelBtn,
+#categoryCancelBtn {
+  background: #fff;
+  color: #1f2933;
+  border-color: #cbd5e1;
+}
+
+#saveProjectBtn:hover,
+#undoBtn:hover,
+#categorySettingsBtn:hover,
+#openProjectBtn:hover,
+#addActionRowBtn:hover,
+#whyTreeCancelBtn:hover,
+#categoryCancelBtn:hover {
+  background: #f2f3f5;
+  border-color: #aeb8c5;
+}
+
+#undoBtn:disabled {
+  background: #f2f3f5;
+  color: #9aa3af;
+}
+
+.action-cell-input:focus {
+  background: #fff !important;
+  box-shadow: inset 0 0 0 2px rgba(227, 6, 19, 0.14);
+  border-color: rgba(227, 6, 19, 0.35);
 }
