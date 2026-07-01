@@ -4,15 +4,27 @@
   <meta charset="UTF-8">
   <title id="pageTitle">Fiskeben ROPEX</title>
   <meta name="viewport" content="width=1122, initial-scale=1.0">
-  <link rel="stylesheet" href="style.css?v=20260210">
+  <link rel="stylesheet" href="style.css?v=20260701p">
 </head>
-
 <body>
-  <!-- Hjælp-knap -->
-  <div class="top-right-tools">
-    <button id="languageToggle" type="button" title="Skift sprog">DK</button>
-    <div id="helpBtn" title="Få hjælp til at komme igang!">❓</div>
-  </div>
+  <header class="app-header">
+    <div class="app-header-inner">
+      <div class="brand-block">
+        <div class="brand-mark">ROCKWOOL</div>
+      </div>
+
+      <nav class="header-nav" aria-label="Værktøjsnavigation">
+        <button class="header-nav-item active" id="navFishboneBtn" type="button">Fiskeben</button>
+        <button class="header-nav-item" id="navWhyBtn" type="button">5xWhy</button>
+        <button class="header-nav-item" id="navActionBtn" type="button">Tiltag</button>
+      </nav>
+
+      <div class="top-right-tools">
+        <button id="languageToggle" type="button" title="Skift sprog">DK</button>
+        <div id="helpBtn" title="Få hjælp til at komme igang!">?</div>
+      </div>
+    </div>
+  </header>
 
   <!-- Hjælp-boks -->
   <div id="helpOverlay" class="hidden">
@@ -24,51 +36,131 @@
         <li id="helpItem2">Træk og slip for at flytte årsager.</li>
         <li id="helpItem3">Dobbeltklik på en boks for at redigere.</li>
         <li id="helpItem4">Klik på 5xWHY-ikonet for at lave en 5xWhy-træanalyse på en årsag.</li>
-        <li id="helpItem5">Du kan gemme og åbne projekter som .json-filer.</li>
-        <li id="helpItem6">“Gem alt som PDF” laver en PDF med diagram, 5xWhy-træer og M-liste.</li>
+        <li id="helpItem5">Brug “Ret M’er / ben” til at ændre antal ben og navnene på benene.</li>
+        <li id="helpItem8">Brug tiltagstabellen under diagrammet til at skrive dato, opgave, hvem og ROPEX nr.</li>
+        <li id="helpItem9">Brug Fortryd til at gå et trin tilbage, hvis du kommer til at slette, flytte eller ændre noget.</li>
+        <li id="helpItem6">Du kan gemme og åbne projekter som .json-filer.</li>
+        <li id="helpItem7">“Gem alt som PDF” laver en PDF med diagram, 5xWhy-træer og M-liste.</li>
       </ul>
       <div class="help-footer" id="helpFooter">Tak fordi du bruger Fiskeben ROPEX!</div>
     </div>
   </div>
 
-  <h1 id="appTitle">Fiskeben ROPEX</h1>
+  <main class="page-shell">
+    <section class="page-intro">
+      <div class="page-kicker" id="pageKicker">ROPEX værktøj</div>
+      <p class="page-subtitle" id="pageSubtitle">Årsagsanalyse, 5xWhy og opfølgende tiltag samlet ét sted.</p>
+    </section>
 
-  <div class="container">
-    <div class="diagram-container" id="diagramArea">
-      <svg id="fishboneSvg" width="1122" height="793">
-        <g id="ishikawa"></g>
-      </svg>
-      <div id="causes"></div>
+<div class="container">
+      <section id="fishbonePage" class="tool-page">
+        <div class="diagram-container" id="diagramArea">
+          <svg id="fishboneSvg" width="1122" height="793">
+            <g id="ishikawa"></g>
+          </svg>
+          <div id="causes"></div>
 
-      <div id="problemBox"
-           contenteditable="true"
-           data-placeholder="Problemet skrives her"
-           title="Skriv problemet her"
-           class="placeholder">
+          <div id="problemBox"
+               contenteditable="true"
+               data-placeholder="Problemet skrives her"
+               title="Skriv problemet her"
+               class="placeholder">
+          </div>
+        </div>
+      </section>
+
+      <section id="standaloneWhyPage" class="tool-page hidden">
+        <div class="standalone-why-panel">
+          <div class="standalone-why-header">
+            <div>
+              <div class="standalone-kicker">5xWhy</div>
+              <h2 id="standaloneWhyHeading">Selvstændig 5xWhy</h2>
+            </div>
+            <button id="standaloneWhyHelpBtn" type="button" class="standalone-help-btn" title="Hjælp">?</button>
+          </div>
+
+          <label class="standalone-title-label" for="standaloneWhyTitleInput" id="standaloneWhyTitleLabel">Overskrift</label>
+          <div id="standaloneWhyTitleInput"
+               class="standalone-title-input placeholder"
+               contenteditable="true"
+               data-placeholder="Skriv overskrift her"
+               title="Skriv overskrift her">Skriv overskrift her</div>
+
+          <div id="standaloneTree5whyRoot" class="tree5why-tree standalone-tree"></div>
+
+          <button class="tree5why-btn add tree5why-add-root" id="standaloneAddRootWhyBtn" type="button">
+            + Tilføj hvorfor (øverste niveau)
+          </button>
+        </div>
+      </section>
+
+      <div class="controls">
+        <button id="savePdfBtn">Gem alt som PDF</button>
+        <button id="saveProjectBtn">Gem projekt</button>
+        <button id="undoBtn" type="button" disabled>Fortryd</button>
+        <button id="categorySettingsBtn" type="button">Ret M’er / ben</button>
+
+        <input type="file" id="loadProjectFile" accept=".json">
+        <button id="openProjectBtn">Åbn projekt</button>
+      </div>
+
+      <div class="action-table-section" id="actionTableSection">
+        <div class="action-table-header">
+          <h2 id="actionTableTitle">Tiltag / opgaver</h2>
+          <button id="addActionRowBtn" type="button">+ Tilføj opgave</button>
+        </div>
+
+        <div class="action-table-wrap">
+          <table id="actionTable">
+            <thead>
+              <tr>
+                <th id="actionHeaderDate">Dato</th>
+                <th id="actionHeaderTask">Opgave</th>
+                <th id="actionHeaderWho">Hvem</th>
+                <th id="actionHeaderRopex">ROPEX nr.</th>
+                <th class="action-delete-col"></th>
+              </tr>
+            </thead>
+            <tbody id="actionTableBody"></tbody>
+          </table>
+        </div>
       </div>
     </div>
-
-    <div class="controls">
-      <button id="savePdfBtn">Gem alt som PDF</button>
-      <button id="saveProjectBtn">Gem projekt</button>
-
-      <input type="file" id="loadProjectFile" accept=".json">
-      <button id="openProjectBtn">Åbn projekt</button>
-    </div>
+  </main>
 
   <div id="whyHelpOverlay" class="hidden">
-  <div class="help-content">
-    <button class="closeHelp" title="Luk hjælp">&times;</button>
-    <div class="help-title" id="whyHelpTitle">Hjælp til 5xWhy</div>
-    <ul>
-      <li id="whyHelpItem1">Start med den mest oplagte forklaring (Hvorfor 1).</li>
-      <li id="whyHelpItem2">Brug “+ Under-hvorfor” til at gå dybere (Hvorfor 1.1, 1.1.1 osv.).</li>
-      <li id="whyHelpItem3">Skriv kort og konkret i hver boks.</li>
-      <li id="whyHelpItem4">Stop når I har en årsag, I kan handle på (ikke nødvendigvis præcis 5).</li>
-      <li id="whyHelpItem5">Dot kan bruges til at markere den vigtigste gren.</li>
-    </ul>
+    <div class="help-content">
+      <button class="closeHelp" title="Luk hjælp">&times;</button>
+      <div class="help-title" id="whyHelpTitle">Hjælp til 5xWhy</div>
+      <ul>
+        <li id="whyHelpItem1">Start med den mest oplagte forklaring (Hvorfor 1).</li>
+        <li id="whyHelpItem2">Brug “+ Under-hvorfor” til at gå dybere (Hvorfor 1.1, 1.1.1 osv.).</li>
+        <li id="whyHelpItem3">Skriv kort og konkret i hver boks.</li>
+        <li id="whyHelpItem4">Stop når I har en årsag, I kan handle på (ikke nødvendigvis præcis 5).</li>
+        <li id="whyHelpItem5">Dot kan bruges til at markere den vigtigste gren.</li>
+      </ul>
+    </div>
   </div>
-</div>
+
+  <!-- Tilpas M'er / ben-popup -->
+  <div id="categoryPopupBackdrop" class="hidden"></div>
+  <div id="categoryPopup" class="category-popup hidden">
+    <div class="category-popup-header">
+      <div class="category-popup-title" id="categoryPopupTitle">Ret M’er / ben</div>
+      <button id="categoryPopupCloseBtn" type="button" title="Luk">×</button>
+    </div>
+
+    <label class="category-count-label" for="categoryCountInput" id="categoryCountLabel">Antal ben</label>
+    <input type="number" id="categoryCountInput" min="1" max="8" value="6">
+
+    <div id="categoryFields" class="category-fields"></div>
+
+    <div class="category-popup-actions">
+      <button id="categorySaveBtn" type="button">Gem</button>
+      <button id="categoryResetBtn" type="button">Tilbage til 6 M’er</button>
+      <button id="categoryCancelBtn" type="button">Annuller</button>
+    </div>
+  </div>
 
   <!-- Tilføj årsag-popup -->
   <div id="popup" class="custom-popup">
@@ -91,11 +183,8 @@
         </div>
       </div>
 
-
       <div class="why-cause" id="whyTreeCause"></div>
-
       <div id="tree5whyRoot" class="tree5why-tree"></div>
-
       <button class="tree5why-btn add tree5why-add-root" id="addRootWhyBtn">+ Tilføj hvorfor (øverste niveau)</button>
 
       <div class="why-tree-footer">
@@ -105,10 +194,10 @@
     </div>
   </div>
 
-<!-- PDF bibliotek -->
-<script src="html2pdf.bundle.min.js"></script>
+  <!-- PDF bibliotek -->
+  <script src="html2pdf.bundle.min.js"></script>
 
-<!-- Din kode -->
-<script src="script.js?v=20260210"></script>
+  <!-- Din kode -->
+  <script src="script.js?v=20260701p"></script>
 </body>
 </html>
