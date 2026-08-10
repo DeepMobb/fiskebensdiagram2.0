@@ -1,4 +1,4 @@
-# ROPEX Fishbone / 5xWhy
+# ROPEX Fishbone / 5xWhy - v72
 
 Et lille statisk webværktøj til ROPEX-arbejde med:
 
@@ -8,6 +8,10 @@ Et lille statisk webværktøj til ROPEX-arbejde med:
 - Gem/åbn projekt som JSON
 - Eksport til PDF
 - Dansk, norsk og engelsk sprogvalg
+
+## Version
+
+v72
 
 ## Sådan bruges værktøjet lokalt
 

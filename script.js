@@ -1,5 +1,5 @@
 // =====================================================
-// Fiskeben ROPEX - Script.js (v2)
+// Fiskeben ROPEX - Script.js (v70)
 // Fokus: stabil app + PDF hvor hele 5xWhy er på én side
 // =====================================================
 
@@ -493,6 +493,7 @@ function applyLanguage() {
 
     if (problemBox.classList.contains("placeholder")) {
       problemBox.textContent = t("problemPlaceholder");
+      adjustProblemBoxSize();
     }
   }
 
@@ -677,11 +678,12 @@ function setProblemTextFromData(text) {
   if (!txt.trim()) {
     problemBox.classList.add("placeholder");
     problemBox.textContent = problemBox.getAttribute("data-placeholder") || t("problemPlaceholder");
-    problemBox.style.height = "80px";
+    problemBox.style.height = `${PROBLEM_BOX_DEFAULT_HEIGHT}px`;
+    adjustProblemBoxSize();
   } else {
     problemBox.classList.remove("placeholder");
     problemBox.textContent = txt;
-    adjustProblemBoxHeight();
+    adjustProblemBoxSize();
   }
 }
 
@@ -962,10 +964,90 @@ function sanitizeProblemBox() {
   problemBox.textContent = txt;
 }
 
-function adjustProblemBoxHeight() {
+const PROBLEM_BOX_CENTER_X = 561;
+const PROBLEM_BOX_MIN_WIDTH = 520;
+const PROBLEM_BOX_MAX_WIDTH = 860;
+const PROBLEM_BOX_DEFAULT_HEIGHT = 46;
+const PROBLEM_BOX_OFFSET_GAP = 4;
+const PROBLEM_BOX_OFFSET_SCALE = 0.5;
+let currentFishboneOffsetY = 0;
+
+function getProblemBoxTextForLayout() {
+  if (!problemBox || problemBox.classList.contains("placeholder")) return "";
+  return sanitizeTextContent(problemBox.innerText || problemBox.textContent || "");
+}
+
+function estimateProblemBoxTextWidth() {
+  if (!problemBox) return PROBLEM_BOX_MIN_WIDTH;
+
+  const text = getProblemBoxTextForLayout();
+  if (!text.trim()) return PROBLEM_BOX_MIN_WIDTH;
+
+  const canvas = document.createElement("canvas");
+  const ctx = canvas.getContext("2d");
+  if (!ctx) return PROBLEM_BOX_MIN_WIDTH;
+
+  const computed = window.getComputedStyle(problemBox);
+  ctx.font = `${computed.fontWeight} ${computed.fontSize} ${computed.fontFamily}`;
+
+  const lines = text.split(/\n+/).filter(Boolean);
+  const widest = lines.reduce((max, line) => Math.max(max, ctx.measureText(line).width), 0);
+  return Math.min(PROBLEM_BOX_MAX_WIDTH, Math.max(PROBLEM_BOX_MIN_WIDTH, Math.ceil(widest + 48)));
+}
+
+function getFishboneYOffset() {
+  if (!problemBox) return 0;
+  const height = parseFloat(problemBox.style.height) || problemBox.offsetHeight || PROBLEM_BOX_DEFAULT_HEIGHT;
+  const extraHeight = Math.max(0, height - PROBLEM_BOX_DEFAULT_HEIGHT);
+  if (!extraHeight) return 0;
+  return Math.max(0, Math.round((extraHeight * PROBLEM_BOX_OFFSET_SCALE) + PROBLEM_BOX_OFFSET_GAP));
+}
+
+function getCauseBaseY(div) {
+  if (!div) return 0;
+  const stored = parseFloat(div.dataset.baseY);
+  if (Number.isFinite(stored)) return stored;
+
+  const visualTop = parseFloat(div.style.top) || 0;
+  const baseY = visualTop - currentFishboneOffsetY;
+  div.dataset.baseY = String(baseY);
+  return baseY;
+}
+
+function setCauseBaseY(div, baseY) {
+  if (!div) return;
+  const safeBase = Number.isFinite(baseY) ? baseY : 0;
+  div.dataset.baseY = String(safeBase);
+  div.style.top = px(safeBase + currentFishboneOffsetY);
+}
+
+function applyFishboneVerticalOffset() {
+  const newOffset = getFishboneYOffset();
+
+  document.querySelectorAll("#causes .causeBox").forEach(div => {
+    const baseY = getCauseBaseY(div);
+    div.style.top = px(baseY + newOffset);
+  });
+
+  currentFishboneOffsetY = newOffset;
+
+  const svg = document.getElementById("fishboneSvg");
+  if (svg) {
+    svg.style.transform = currentFishboneOffsetY ? `translateY(${currentFishboneOffsetY}px)` : "";
+  }
+}
+
+function adjustProblemBoxSize() {
   if (!problemBox) return;
+
+  const targetWidth = estimateProblemBoxTextWidth();
+  problemBox.style.width = `${targetWidth}px`;
+  problemBox.style.left = `${Math.round(PROBLEM_BOX_CENTER_X - (targetWidth / 2))}px`;
+
   problemBox.style.height = "auto";
-  problemBox.style.height = `${problemBox.scrollHeight}px`;
+  const nextHeight = Math.max(PROBLEM_BOX_DEFAULT_HEIGHT, problemBox.scrollHeight);
+  problemBox.style.height = `${nextHeight}px`;
+  applyFishboneVerticalOffset();
 }
 
 function initProblemBox() {
@@ -987,9 +1069,10 @@ function initProblemBox() {
     if (problemBox.textContent.trim() === "") {
       problemBox.classList.add("placeholder");
       problemBox.textContent = problemBox.getAttribute("data-placeholder");
-      problemBox.style.height = "80px";
+      problemBox.style.height = `${PROBLEM_BOX_DEFAULT_HEIGHT}px`;
+      adjustProblemBoxSize();
     } else {
-      adjustProblemBoxHeight();
+      adjustProblemBoxSize();
     }
 
     if (before && JSON.stringify(before) !== JSON.stringify(buildProjectData())) {
@@ -998,14 +1081,15 @@ function initProblemBox() {
     problemUndoSnapshot = null;
   });
 
-  problemBox.addEventListener("input", adjustProblemBoxHeight);
+  problemBox.addEventListener("input", adjustProblemBoxSize);
 
   if (problemBox.textContent.trim() === "") {
     problemBox.classList.add("placeholder");
     problemBox.textContent = problemBox.getAttribute("data-placeholder");
-    problemBox.style.height = "80px";
+    problemBox.style.height = `${PROBLEM_BOX_DEFAULT_HEIGHT}px`;
+    adjustProblemBoxSize();
   } else {
-    adjustProblemBoxHeight();
+    adjustProblemBoxSize();
   }
 }
 
@@ -1175,10 +1259,10 @@ function moveCausesWithChangedBones(capturedAnchors) {
 
     const rect = item.div.getBoundingClientRect();
     const currentLeft = parseInt(item.div.style.left, 10) || 0;
-    const currentTop = parseInt(item.div.style.top, 10) || 0;
+    const currentBaseTop = getCauseBaseY(item.div);
 
     item.div.style.left = px(clamp(currentLeft + dx, 0, DIAGRAM_W - rect.width));
-    item.div.style.top = px(clamp(currentTop + dy, 0, DIAGRAM_H - rect.height));
+    setCauseBaseY(item.div, clamp(currentBaseTop + dy, 0, DIAGRAM_H - rect.height - currentFishboneOffsetY));
     item.div.dataset.categoryIndex = String(targetIndex);
   });
 }
@@ -1278,7 +1362,8 @@ function createCauseBox({ x, y, text = "", whyTree = [], categoryIndex = null })
   const div = document.createElement("div");
   div.className = "causeBox";
   div.style.left = px(x);
-  div.style.top = px(y);
+  div.dataset.baseY = String(y || 0);
+  div.style.top = px((y || 0) + currentFishboneOffsetY);
   div.title = "Dobbeltklik for at redigere";
   div._whyTree = Array.isArray(whyTree) ? deepClone(whyTree) : [];
 
@@ -1376,7 +1461,7 @@ function openAddPopupAt(clientX, clientY) {
 
   // klikposition til selve boksen i diagrammet
   clickCoords.x = clamp(clientX - diagramRect.left, 0, DIAGRAM_W - 220);
-  clickCoords.y = clamp(clientY - diagramRect.top, 0, DIAGRAM_H - 120);
+  clickCoords.y = clamp(clientY - diagramRect.top - currentFishboneOffsetY, 0, DIAGRAM_H - 120);
 
   popupText.value = "";
 
@@ -1432,7 +1517,7 @@ function startDrag(div, clientX, clientY) {
   dragState.startMouseX = clientX;
   dragState.startMouseY = clientY;
   dragState.startLeft = parseInt(div.style.left, 10) || 0;
-  dragState.startTop = parseInt(div.style.top, 10) || 0;
+  dragState.startTop = getCauseBaseY(div);
   dragState.moved = false;
   dragState.undoSnapshot = buildProjectData();
 }
@@ -1453,10 +1538,10 @@ function onMouseMove(e) {
   const height = targetRect.height;
 
   const newLeft = clamp(dragState.startLeft + dx, 0, DIAGRAM_W - width);
-  const newTop = clamp(dragState.startTop + dy, 0, DIAGRAM_H - height);
+  const newTop = clamp(dragState.startTop + dy, 0, DIAGRAM_H - height - currentFishboneOffsetY);
 
   target.style.left = px(newLeft);
-  target.style.top = px(newTop);
+  setCauseBaseY(target, newTop);
 }
 
 function onMouseUp() {
@@ -2155,7 +2240,7 @@ function buildProjectData() {
     const storedIndex = getStoredCategoryIndex(div);
     causes.push({
       x: parseInt(div.style.left, 10) || 0,
-      y: parseInt(div.style.top, 10) || 0,
+      y: Math.round(getCauseBaseY(div)),
       text: getCauseText(div),
       categoryIndex: storedIndex !== null ? storedIndex : getNearestCategoryIndexForBox(div, getMLabelPositionData()),
       whyTree: Array.isArray(div._whyTree) ? deepClone(div._whyTree) : []
@@ -2164,7 +2249,7 @@ function buildProjectData() {
 
   const problemText = problemBox.classList.contains("placeholder")
     ? ""
-    : problemBox.textContent;
+    : (problemBox.innerText || problemBox.textContent);
 
   return {
     appVersion: 8,
@@ -2388,13 +2473,20 @@ function countTreeNodes(nodes) {
 function makePdfPage() {
   const page = document.createElement("div");
   page.className = "pdf-page";
+  page.style.display = "block";
+  page.style.margin = "0";
+  page.style.padding = "0";
   page.style.width = `${DIAGRAM_W}px`;
   page.style.height = `${DIAGRAM_H}px`;
   page.style.minWidth = `${DIAGRAM_W}px`;
   page.style.minHeight = `${DIAGRAM_H}px`;
+  page.style.maxWidth = `${DIAGRAM_W}px`;
+  page.style.maxHeight = `${DIAGRAM_H}px`;
   page.style.boxSizing = "border-box";
   page.style.background = "#fff";
   page.style.overflow = "hidden";
+  page.style.breakInside = "avoid";
+  page.style.pageBreakInside = "avoid";
   return page;
 }
 
@@ -2425,7 +2517,7 @@ function renderWhyTreeForPdf(tree, parentEl, parentPath = [], options = {}) {
     nodeDiv.style.alignItems = "flex-start";
     nodeDiv.style.padding = "2px 0";
     nodeDiv.style.marginBottom = "6px";
-    nodeDiv.style.background = node.selectedAction ? "#fff9c6" : "#fff";
+    nodeDiv.style.background = node.selectedAction ? "#edf3ff" : "#fff";
 
     const left = document.createElement("div");
     left.className = "tree5why-left";
@@ -2442,7 +2534,7 @@ function renderWhyTreeForPdf(tree, parentEl, parentPath = [], options = {}) {
       dot.style.height = "8px";
       dot.style.borderRadius = "50%";
       dot.style.display = "inline-block";
-      dot.style.background = node.selectedAction ? "#ffe600" : "#bdd2ee";
+      dot.style.background = node.selectedAction ? "#e30613" : "#bdd2ee";
       left.appendChild(dot);
     }
 
@@ -2596,13 +2688,18 @@ function buildStandaloneWhyPdfPage() {
 }
 
 function buildFishbonePdfPage() {
-  if (typeof adjustProblemBoxHeight === "function") {
-    adjustProblemBoxHeight();
+  if (typeof adjustProblemBoxSize === "function") {
+    adjustProblemBoxSize();
   }
 
   const page = makePdfPage();
   const clone = document.getElementById("diagramArea").cloneNode(true);
 
+  // Brug den stabile PDF-visning igen: selve diagrammet lægges 1:1 ind på siden.
+  // Den tidligere ekstra skalering gav stor tom topmargen i nogle browsere.
+  clone.style.position = "relative";
+  clone.style.left = "0";
+  clone.style.top = "0";
   clone.style.margin = "0";
   clone.style.width = `${DIAGRAM_W}px`;
   clone.style.height = `${DIAGRAM_H}px`;
@@ -2610,6 +2707,8 @@ function buildFishbonePdfPage() {
   clone.style.boxShadow = "none";
   clone.style.overflow = "hidden";
   clone.style.background = "#fff";
+  clone.style.transform = "none";
+  clone.style.transformOrigin = "top left";
 
   clone.querySelectorAll(".why-icon, .delete-cause-btn").forEach(el => el.remove());
 
@@ -2772,6 +2871,27 @@ function setupHeaderNavigation() {
 }
 
 
+
+function treeHasTextForPdf(nodes) {
+  if (!Array.isArray(nodes)) return false;
+
+  return nodes.some(node => {
+    const text = sanitizeTextContent((node && node.q) || "").trim();
+    return !!text || treeHasTextForPdf((node && node.children) || []);
+  });
+}
+
+function isPlaceholderStandaloneTitle(title) {
+  const safeTitle = sanitizeTextContent(title || "").trim();
+  if (!safeTitle) return true;
+
+  return [
+    I18N.da?.standaloneWhyTitlePlaceholder,
+    I18N.no?.standaloneWhyTitlePlaceholder,
+    I18N.en?.standaloneWhyTitlePlaceholder
+  ].some(value => safeTitle === value);
+}
+
 function hasFishboneContentForPdf() {
   const problemText = problemBox && !problemBox.classList.contains("placeholder")
     ? sanitizeTextContent(problemBox.textContent || "")
@@ -2784,7 +2904,9 @@ function hasCausesForPdf() {
 }
 
 function hasStandaloneWhyForPdf() {
-  return (Array.isArray(standaloneWhyTree) && standaloneWhyTree.length > 0) || !!getStandaloneWhyTitleText().trim();
+  const title = getStandaloneWhyTitleText();
+  const hasRealTitle = !!title.trim() && !isPlaceholderStandaloneTitle(title);
+  return hasRealTitle || treeHasTextForPdf(standaloneWhyTree);
 }
 
 function getPdfJsPDFClass() {
@@ -2805,7 +2927,7 @@ function buildPdfPages() {
   }
 
   const whyBoxes = Array.from(document.querySelectorAll("#causes .causeBox"))
-    .filter(div => Array.isArray(div._whyTree) && div._whyTree.length > 0);
+    .filter(div => treeHasTextForPdf(div._whyTree));
 
   whyBoxes.forEach((div, index) => {
     pages.push(buildWhyBilagPage(div, index));
@@ -2898,6 +3020,8 @@ async function pageToCanvasWithHtml2Pdf(page) {
   try {
     await waitForPdfLayout();
 
+    // Brug html2pdf/html2canvas gennem samme stabile flow for alle sider.
+    // Direkte html2canvas på en fixed mount gav forskydning nedad i PDF'en.
     const worker = html2pdf()
       .set(getPdfOptions())
       .from(page)
@@ -2908,6 +3032,22 @@ async function pageToCanvasWithHtml2Pdf(page) {
   } finally {
     mount.remove();
   }
+}
+
+function createPdfDocument(filename) {
+  const JsPDF = getPdfJsPDFClass();
+
+  if (JsPDF) {
+    return new JsPDF({
+      orientation: "landscape",
+      unit: "px",
+      format: [DIAGRAM_W, DIAGRAM_H],
+      compress: true,
+      hotfixes: ["px_scaling"]
+    });
+  }
+
+  return null;
 }
 
 async function createBlankPdfWithHtml2Pdf(filename) {
@@ -2934,15 +3074,16 @@ async function saveAllAsPDF() {
   const oldScrollY = window.scrollY || window.pageYOffset || 0;
 
   try {
-    if (typeof adjustProblemBoxHeight === "function") {
-      adjustProblemBoxHeight();
+    if (typeof adjustProblemBoxSize === "function") {
+      adjustProblemBoxSize();
     }
 
     if (typeof html2pdf !== "function") {
       throw new Error("PDF-biblioteket blev ikke indlæst korrekt.");
     }
 
-    // Nulstil midlertidigt vandret scroll, så html2canvas ikke forskyder siderne.
+    // Nulstil kun vandret scroll under PDF-generering.
+    // Det stabile offscreen-render håndterer lodret placering uden at skubbe indholdet ned.
     window.scrollTo(0, oldScrollY);
 
     const pages = buildPdfPages();
@@ -2975,6 +3116,516 @@ async function saveAllAsPDF() {
     alert("Der opstod en fejl under PDF-generering. Se konsollen for detaljer.");
   } finally {
     window.scrollTo(oldScrollX, oldScrollY);
+  }
+}
+
+
+
+// =====================================================
+// PDF direct renderer - avoids browser screenshot offset issues
+// =====================================================
+function directPdfRgb(hex) {
+  const safe = String(hex || "#000000").replace("#", "");
+  const full = safe.length === 3 ? safe.split("").map(ch => ch + ch).join("") : safe.padEnd(6, "0").slice(0, 6);
+  return [parseInt(full.slice(0, 2), 16), parseInt(full.slice(2, 4), 16), parseInt(full.slice(4, 6), 16)];
+}
+
+function directPdfSetTextColor(pdf, hex) {
+  const [r, g, b] = directPdfRgb(hex);
+  pdf.setTextColor(r, g, b);
+}
+
+function directPdfSetFillColor(pdf, hex) {
+  const [r, g, b] = directPdfRgb(hex);
+  pdf.setFillColor(r, g, b);
+}
+
+function directPdfSetDrawColor(pdf, hex) {
+  const [r, g, b] = directPdfRgb(hex);
+  pdf.setDrawColor(r, g, b);
+}
+
+function directPdfCleanText(value) {
+  return sanitizeTextContent(value || "").replace(/[\u2018\u2019]/g, "'").replace(/[\u201C\u201D]/g, '"');
+}
+
+function directPdfNewPage(pdf, state) {
+  if (state.started) {
+    pdf.addPage([DIAGRAM_W, DIAGRAM_H], "landscape");
+  } else {
+    state.started = true;
+  }
+
+  directPdfSetFillColor(pdf, "#ffffff");
+  pdf.rect(0, 0, DIAGRAM_W, DIAGRAM_H, "F");
+}
+
+function directPdfSplitText(pdf, text, maxWidth) {
+  const cleaned = directPdfCleanText(text);
+  if (!cleaned) return [];
+  const paragraphs = cleaned.split("\n");
+  const lines = [];
+  paragraphs.forEach((paragraph) => {
+    const split = pdf.splitTextToSize(paragraph || " ", maxWidth);
+    split.forEach(line => lines.push(line));
+  });
+  return lines;
+}
+
+function directPdfDrawWrappedText(pdf, text, x, y, maxWidth, options = {}) {
+  const fontSize = options.fontSize || 14;
+  const lineHeight = options.lineHeight || Math.round(fontSize * 1.25);
+  const maxLines = options.maxLines || 100;
+  pdf.setFont("helvetica", options.fontStyle || "normal");
+  pdf.setFontSize(fontSize);
+  directPdfSetTextColor(pdf, options.color || "#20375c");
+
+  let lines = directPdfSplitText(pdf, text, maxWidth);
+  if (lines.length > maxLines) {
+    lines = lines.slice(0, Math.max(1, maxLines));
+    lines[lines.length - 1] = String(lines[lines.length - 1]).replace(/\s*$/, "") + "...";
+  }
+
+  lines.forEach((line, index) => {
+    pdf.text(String(line), x, y + (index * lineHeight));
+  });
+
+  return lines.length * lineHeight;
+}
+
+function directPdfEstimateTextHeight(pdf, text, maxWidth, fontSize, lineHeight, maxLines = 100) {
+  pdf.setFont("helvetica", "normal");
+  pdf.setFontSize(fontSize);
+  const lines = directPdfSplitText(pdf, text, maxWidth).slice(0, maxLines);
+  return Math.max(lineHeight, lines.length * lineHeight);
+}
+
+function directPdfDrawBox(pdf, x, y, w, h, text, options = {}) {
+  const radius = options.radius ?? 8;
+  const fill = options.fill || "#f2f3f5";
+  const stroke = options.stroke || "#8b96a8";
+  const textColor = options.textColor || "#20375c";
+  const fontSize = options.fontSize || 14;
+  const fontStyle = options.fontStyle || "bold";
+  const padX = options.padX || 10;
+  const padY = options.padY || 14;
+  const lineHeight = options.lineHeight || Math.round(fontSize * 1.22);
+
+  directPdfSetFillColor(pdf, fill);
+  directPdfSetDrawColor(pdf, stroke);
+  pdf.setLineWidth(options.lineWidth || 1);
+  pdf.roundedRect(x, y, w, h, radius, radius, "FD");
+
+  const maxLines = Math.max(1, Math.floor((h - (padY * 2)) / lineHeight));
+  directPdfDrawWrappedText(pdf, text, x + padX, y + padY + fontSize * 0.8, Math.max(20, w - padX * 2), {
+    fontSize,
+    lineHeight,
+    maxLines,
+    color: textColor,
+    fontStyle
+  });
+}
+
+function directPdfGetElementBox(el, fallback) {
+  if (!el) return fallback;
+  const left = parseFloat(el.style.left);
+  const top = parseFloat(el.style.top);
+  const width = parseFloat(el.style.width);
+  const height = parseFloat(el.style.height);
+
+  return {
+    x: Number.isFinite(left) ? left : fallback.x,
+    y: Number.isFinite(top) ? top : fallback.y,
+    w: Number.isFinite(width) ? width : (el.offsetWidth || fallback.w),
+    h: Number.isFinite(height) ? height : (el.offsetHeight || fallback.h)
+  };
+}
+
+function directPdfDrawFishbonePage(pdf, state) {
+  directPdfNewPage(pdf, state);
+
+  const mNames = getMNames();
+  const layout = getCategoryLayout(mNames.length);
+  const labelFontSize = mNames.length >= 7 ? 20 : 22;
+  const pdfFishboneOffsetY = currentFishboneOffsetY || 0;
+
+  pdf.setLineCap("butt");
+  directPdfSetDrawColor(pdf, "#000000");
+  pdf.setLineWidth(10);
+  pdf.line(rygX0 - 283, rygY + pdfFishboneOffsetY, rygX1 + 13, rygY + pdfFishboneOffsetY);
+
+  directPdfSetFillColor(pdf, "#dc143c");
+  pdf.triangle(rygX1 + 14, rygY + pdfFishboneOffsetY - 14, rygX1 + 74, rygY + pdfFishboneOffsetY, rygX1 + 14, rygY + pdfFishboneOffsetY + 14, "F");
+
+  pdf.setLineWidth(6);
+  pdf.setFont("helvetica", "bold");
+  pdf.setFontSize(labelFontSize);
+  directPdfSetTextColor(pdf, "#283c6c");
+
+  layout.top.forEach((catIndex, sideIndex) => {
+    const xBase = getBoneBaseX(sideIndex, layout.top.length);
+    const x2 = xBase - boneLen * Math.cos(boneAngle);
+    const y2 = rygY + pdfFishboneOffsetY - boneLen * Math.sin(boneAngle);
+    directPdfSetDrawColor(pdf, "#000000");
+    pdf.line(xBase, rygY + pdfFishboneOffsetY, x2, y2);
+    directPdfSetTextColor(pdf, "#283c6c");
+    pdf.text(directPdfCleanText(mNames[catIndex]), x2, y2 - 20, { align: "center" });
+  });
+
+  layout.bottom.forEach((catIndex, sideIndex) => {
+    const xBase = getBoneBaseX(sideIndex, layout.bottom.length);
+    const x2 = xBase - boneLen * Math.cos(boneAngle);
+    const y2 = rygY + pdfFishboneOffsetY + boneLen * Math.sin(boneAngle);
+    directPdfSetDrawColor(pdf, "#000000");
+    pdf.line(xBase, rygY + pdfFishboneOffsetY, x2, y2);
+    directPdfSetTextColor(pdf, "#283c6c");
+    pdf.text(directPdfCleanText(mNames[catIndex]), x2, y2 + 38, { align: "center" });
+  });
+
+  const problemText = problemBox && !problemBox.classList.contains("placeholder")
+    ? directPdfCleanText(problemBox.textContent || "")
+    : directPdfCleanText(t("problemPlaceholder"));
+  const problem = directPdfGetElementBox(problemBox, { x: 301, y: 2, w: 520, h: 48 });
+  directPdfDrawBox(pdf, problem.x, problem.y, problem.w, Math.max(54, problem.h), problemText, {
+    fill: "#ffffff",
+    stroke: "#e30613",
+    textColor: problemBox && problemBox.classList.contains("placeholder") ? "#b88086" : "#7b0e14",
+    fontSize: 16,
+    fontStyle: "bold",
+    radius: 10,
+    lineWidth: 2,
+    padX: 12,
+    padY: 12
+  });
+
+  Array.from(document.querySelectorAll("#causes .causeBox")).forEach(div => {
+    const x = parseFloat(div.style.left);
+    const y = parseFloat(div.style.top);
+    const w = div.offsetWidth || parseFloat(div.style.width) || 220;
+    const h = div.offsetHeight || parseFloat(div.style.height) || 70;
+    if (!Number.isFinite(x) || !Number.isFinite(y)) return;
+
+    directPdfDrawBox(pdf, x, y, w, Math.max(44, h), getCauseText(div), {
+      fill: "#f2f3f5",
+      stroke: "#8b96a8",
+      textColor: "#20375c",
+      fontSize: 15,
+      fontStyle: "bold",
+      radius: 8,
+      padX: 10,
+      padY: 10
+    });
+  });
+}
+
+function directPdfFlattenWhyTree(nodes, depth = 0, path = [], parentId = null, items = []) {
+  if (!Array.isArray(nodes)) return items;
+
+  nodes.forEach((node, index) => {
+    const currentPath = path.concat(index + 1);
+    const text = directPdfCleanText((node && node.q) || "");
+    let itemId = parentId;
+
+    if (text) {
+      itemId = items.length;
+      items.push({
+        id: itemId,
+        parentId,
+        depth,
+        label: `${t("why")} ${currentPath.join(".")}`,
+        text,
+        selectedAction: !!node.selectedAction
+      });
+    }
+
+    directPdfFlattenWhyTree((node && node.children) || [], depth + 1, currentPath, itemId, items);
+  });
+
+  return items;
+}
+
+function directPdfDrawWhyPages(pdf, state, titleText, treeData) {
+  const items = directPdfFlattenWhyTree(Array.isArray(treeData) ? treeData : []);
+  if (!items.length) return;
+
+  const maxDepth = Math.max(1, ...items.map(item => item.depth + 1));
+  const marginX = 38;
+  const gapX = maxDepth >= 5 ? 18 : 32;
+  const nodeW = Math.max(135, Math.min(220, (DIAGRAM_W - marginX * 2 - gapX * (maxDepth - 1)) / maxDepth));
+  const fontSize = maxDepth >= 5 ? 9.5 : 11;
+  const lineHeight = Math.round(fontSize * 1.25);
+  const labelSize = Math.max(7.5, fontSize - 2);
+  const maxBoxH = maxDepth >= 5 ? 58 : 70;
+  const spacingY = 12;
+  const topY = 96;
+  const bottomY = DIAGRAM_H - 42;
+  const positions = {};
+  let y = topY;
+  let pageNoForTree = 0;
+
+  function startWhyPage(isContinuation) {
+    directPdfNewPage(pdf, state);
+    pageNoForTree += 1;
+    pdf.setFont("helvetica", "bold");
+    pdf.setFontSize(22);
+    directPdfSetTextColor(pdf, "#253c7c");
+    const shownTitle = isContinuation ? `${titleText} (${pageNoForTree})` : titleText;
+    pdf.text(directPdfCleanText(shownTitle), DIAGRAM_W / 2, 54, { align: "center" });
+    y = topY;
+  }
+
+  startWhyPage(false);
+
+  items.forEach(item => {
+    const x = marginX + item.depth * (nodeW + gapX);
+    const textHeight = directPdfEstimateTextHeight(pdf, item.text, nodeW - 16, fontSize, lineHeight, 8);
+    const boxH = Math.min(maxBoxH, Math.max(30, textHeight + 18));
+    const itemH = boxH + 18;
+
+    if (y + itemH > bottomY) {
+      startWhyPage(true);
+    }
+
+    const labelY = y + labelSize;
+    const boxY = y + 14;
+
+    const parent = item.parentId !== null ? positions[item.parentId] : null;
+    if (parent && parent.page === pageNoForTree) {
+      directPdfSetDrawColor(pdf, "#a5c3f2");
+      pdf.setLineWidth(2);
+      const startX = parent.x + parent.w;
+      const startY = parent.y + parent.h / 2;
+      const endX = x - 10;
+      const endY = boxY + boxH / 2;
+      pdf.line(startX, startY, (startX + endX) / 2, startY);
+      pdf.line((startX + endX) / 2, startY, (startX + endX) / 2, endY);
+      pdf.line((startX + endX) / 2, endY, endX, endY);
+      if (item.selectedAction) {
+        directPdfSetFillColor(pdf, "#e30613");
+      } else {
+        directPdfSetFillColor(pdf, "#bdd2ee");
+      }
+      pdf.circle(endX + 4, endY, 4, "F");
+    }
+
+    pdf.setFont("helvetica", "normal");
+    pdf.setFontSize(labelSize);
+    directPdfSetTextColor(pdf, "#555555");
+    pdf.text(directPdfCleanText(item.label), x, labelY);
+
+    directPdfDrawBox(pdf, x, boxY, nodeW, boxH, item.text, {
+      fill: item.selectedAction ? "#edf3ff" : "#f6f8ff",
+      stroke: "#8899cc",
+      textColor: "#20375c",
+      fontSize,
+      fontStyle: "normal",
+      radius: 6,
+      padX: 8,
+      padY: 7,
+      lineWidth: 1
+    });
+
+    positions[item.id] = { page: pageNoForTree, x, y: boxY, w: nodeW, h: boxH };
+    y += itemH + spacingY;
+  });
+}
+
+function directPdfDrawActionPages(pdf, state) {
+  let rows = getActionRows();
+  const hasContent = rows.some(row => row.date || row.task || row.who || row.ropex);
+
+  if (!rows.length) rows = [{ date: "", task: "", who: "", ropex: "" }];
+  if (!hasContent) {
+    rows = [{ date: "", task: "", who: "", ropex: "" }];
+    while (rows.length < 4) rows.push({ date: "", task: "", who: "", ropex: "" });
+  }
+
+  const rowsPerPage = 10;
+  const colX = [48, 178, 720, 892];
+  const colW = [130, 542, 172, 182];
+  const rowH = 44;
+  const tableY = 112;
+
+  for (let start = 0; start < rows.length; start += rowsPerPage) {
+    const chunk = rows.slice(start, start + rowsPerPage);
+    directPdfNewPage(pdf, state);
+
+    pdf.setFont("helvetica", "bold");
+    pdf.setFontSize(22);
+    directPdfSetTextColor(pdf, "#253c7c");
+    pdf.text(directPdfCleanText(t("actionTableTitle")), DIAGRAM_W / 2, 72, { align: "center" });
+
+    const headers = [t("actionTableDate"), t("actionTableTask"), t("actionTableWho"), t("actionTableRopex")];
+    pdf.setFontSize(13);
+    headers.forEach((header, i) => {
+      directPdfSetFillColor(pdf, "#111111");
+      directPdfSetDrawColor(pdf, "#333333");
+      pdf.rect(colX[i], tableY, colW[i], 30, "FD");
+      directPdfSetTextColor(pdf, "#ffffff");
+      pdf.text(directPdfCleanText(header), colX[i] + colW[i] / 2, tableY + 20, { align: "center" });
+    });
+
+    chunk.forEach((row, rowIndex) => {
+      const y0 = tableY + 30 + rowIndex * rowH;
+      const values = [formatDateForDisplay(row.date), row.task, row.who, row.ropex];
+      values.forEach((value, i) => {
+        directPdfSetFillColor(pdf, "#ffffff");
+        directPdfSetDrawColor(pdf, "#333333");
+        pdf.rect(colX[i], y0, colW[i], rowH, "FD");
+        directPdfDrawWrappedText(pdf, value || "", colX[i] + 8, y0 + 18, colW[i] - 16, {
+          fontSize: 11,
+          lineHeight: 13,
+          maxLines: 2,
+          color: "#222222",
+          fontStyle: "normal"
+        });
+      });
+    });
+
+    if (rows.length > rowsPerPage) {
+      pdf.setFont("helvetica", "normal");
+      pdf.setFontSize(10);
+      directPdfSetTextColor(pdf, "#666666");
+      pdf.text(`${Math.floor(start / rowsPerPage) + 1} / ${Math.ceil(rows.length / rowsPerPage)}`, DIAGRAM_W - 48, DIAGRAM_H - 32, { align: "right" });
+    }
+  }
+}
+
+function directPdfDrawCausesListPage(pdf, state) {
+  if (!hasCausesForPdf()) return;
+
+  directPdfNewPage(pdf, state);
+  const mNames = getMNames();
+  const categories = {};
+  mNames.forEach(name => { categories[name] = []; });
+  const unknownLabel = t("unknown");
+  categories[unknownLabel] = [];
+
+  Array.from(document.querySelectorAll("#causes .causeBox")).forEach(div => {
+    const cat = getMCatFromPos(div);
+    const safeCat = categories[cat] ? cat : unknownLabel;
+    categories[safeCat].push(getCauseText(div));
+  });
+
+  let y = 64;
+  pdf.setFont("helvetica", "bold");
+  pdf.setFontSize(20);
+  directPdfSetTextColor(pdf, "#222222");
+  pdf.text(directPdfCleanText(t("causesListTitle")), 60, y);
+  y += 26;
+
+  Object.keys(categories).forEach(category => {
+    if (!categories[category].length) return;
+    if (y > DIAGRAM_H - 80) {
+      directPdfNewPage(pdf, state);
+      y = 64;
+    }
+
+    pdf.setFont("helvetica", "bold");
+    pdf.setFontSize(18);
+    directPdfSetTextColor(pdf, "#253c7c");
+    pdf.text(directPdfCleanText(category), 60, y);
+    y += 18;
+
+    categories[category].forEach(cause => {
+      const text = `- ${directPdfCleanText(cause)}`;
+      pdf.setFont("helvetica", "normal");
+      pdf.setFontSize(13);
+      directPdfSetTextColor(pdf, "#222222");
+      const used = directPdfDrawWrappedText(pdf, text, 74, y, DIAGRAM_W - 140, {
+        fontSize: 13,
+        lineHeight: 16,
+        maxLines: 3,
+        color: "#222222",
+        fontStyle: "normal"
+      });
+      y += Math.max(16, used) + 2;
+    });
+    y += 10;
+  });
+}
+
+function directPdfBuildFilename() {
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = String(today.getMonth() + 1).padStart(2, "0");
+  const day = String(today.getDate()).padStart(2, "0");
+  return `fiskeben-samlet-${day}-${month}-${year}.pdf`;
+}
+
+async function createDirectPdfDocument(filename) {
+  const JsPDF = getPdfJsPDFClass();
+
+  if (JsPDF) {
+    return new JsPDF({
+      orientation: "landscape",
+      unit: "px",
+      format: [DIAGRAM_W, DIAGRAM_H],
+      compress: true,
+      hotfixes: ["px_scaling"]
+    });
+  }
+
+  // Når siden åbnes lokalt som file://, eksponerer html2pdf-bundlen ikke altid
+  // jsPDF direkte på window. Vi kan stadig få en jsPDF-instans gennem html2pdf.
+  // html2pdf kan dog starte med en ekstra blank side i nogle browsere, så vi
+  // normaliserer dokumentet til præcis én tom side, inden direct renderer tegner.
+  if (typeof html2pdf === "function") {
+    const pdf = await createBlankPdfWithHtml2Pdf(filename);
+
+    if (pdf && typeof pdf.getNumberOfPages === "function" && typeof pdf.deletePage === "function") {
+      for (let pageNo = pdf.getNumberOfPages(); pageNo > 1; pageNo -= 1) {
+        pdf.deletePage(pageNo);
+      }
+    }
+
+    if (pdf && typeof pdf.setPage === "function") {
+      pdf.setPage(1);
+    }
+
+    return pdf;
+  }
+
+  throw new Error("PDF-biblioteket blev ikke indlæst korrekt.");
+}
+
+async function saveAllAsPDF() {
+  try {
+    if (typeof adjustProblemBoxSize === "function") {
+      adjustProblemBoxSize();
+    }
+
+    const filename = directPdfBuildFilename();
+    const pdf = await createDirectPdfDocument(filename);
+    const state = { started: false };
+
+    if (hasFishboneContentForPdf()) {
+      directPdfDrawFishbonePage(pdf, state);
+    }
+
+    if (hasStandaloneWhyForPdf()) {
+      const title = getStandaloneWhyTitleText() || t("standaloneWhyPdfTitle");
+      directPdfDrawWhyPages(pdf, state, title, standaloneWhyTree);
+    }
+
+    Array.from(document.querySelectorAll("#causes .causeBox"))
+      .filter(div => treeHasTextForPdf(div._whyTree))
+      .forEach((div, index) => {
+        const title = `${t("causeTitle")} ${getCauseText(div) || `#${index + 1}`}`;
+        directPdfDrawWhyPages(pdf, state, title, div._whyTree);
+      });
+
+    directPdfDrawActionPages(pdf, state);
+    directPdfDrawCausesListPage(pdf, state);
+
+    if (!state.started) {
+      directPdfDrawFishbonePage(pdf, state);
+    }
+
+    pdf.save(filename);
+  } catch (err) {
+    console.error(err);
+    alert("Der opstod en fejl under PDF-generering. Se konsollen for detaljer.");
   }
 }
 
