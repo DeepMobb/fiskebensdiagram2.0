@@ -4,8 +4,8 @@
   <meta charset="UTF-8">
   <title id="pageTitle">Fiskeben ROPEX</title>
   <meta name="viewport" content="width=1122, initial-scale=1.0">
-  <meta name="app-version" content="v89">
-  <link rel="stylesheet" href="style.css?v=20260701v89">
+  <meta name="app-version" content="v2.0.4-test">
+  <link rel="stylesheet" href="style.css?v=20260907v204test1">
 </head>
 <body>
   <header class="app-header">
@@ -38,7 +38,7 @@
         <li id="helpItem3">Dobbeltklik på en boks for at redigere.</li>
         <li id="helpItem4">Klik på 5xWHY-ikonet for at lave en 5xWhy-træanalyse på en årsag.</li>
         <li id="helpItem5">Brug “Ret M’er / ben” til at ændre antal ben og navnene på benene.</li>
-        <li id="helpItem8">Brug tiltagstabellen under diagrammet til at skrive dato, opgave, hvem og ROPEX nr.</li>
+        <li id="helpItem8">Klik på “Opret tiltag” på en årsag i fiskebenet eller på prikken i 5xWhy for at oprette et koblet tiltag. Når der står “Tiltag tilføjet”, er markeringen kun en status; koblingen ændres eller fjernes under Tiltag. Flere opgaver kan kobles til samme årsag via Rodårsag-feltet.</li>
         <li id="helpItem9">Brug Fortryd til at gå et trin tilbage, hvis du kommer til at slette, flytte eller ændre noget.</li>
         <li id="helpItem6">Du kan gemme og åbne projekter som .json-filer.</li>
         <li id="helpItem7">“Gem alt som PDF” laver en PDF med diagram, 5xWhy-træer og M-liste.</li>
@@ -107,7 +107,10 @@
 
       <div class="action-table-section" id="actionTableSection">
         <div class="action-table-header">
-          <h2 id="actionTableTitle">Tiltag / opgaver</h2>
+          <div class="action-table-heading-block">
+            <h2 id="actionTableTitle">Tiltag / opgaver</h2>
+            <p id="actionTableHint">Opret flere opgaver med “+ Tilføj opgave” og vælg samme rodårsag i dropdownen. Opgaver kan også stå uden rodårsag og kobles senere.</p>
+          </div>
           <button id="addActionRowBtn" type="button">+ Tilføj opgave</button>
         </div>
 
@@ -115,8 +118,9 @@
           <table id="actionTable">
             <thead>
               <tr>
-                <th id="actionHeaderDate">Dato</th>
+                <th id="actionHeaderRootCause">Rodårsag</th>
                 <th id="actionHeaderTask">Opgave</th>
+                <th id="actionHeaderDate">Dato</th>
                 <th id="actionHeaderWho">Hvem</th>
                 <th id="actionHeaderRopex">ROPEX nr.</th>
                 <th class="action-delete-col"></th>
@@ -138,7 +142,7 @@
         <li id="whyHelpItem2">Brug “+ Under-hvorfor” til at gå dybere (Hvorfor 1.1, 1.1.1 osv.).</li>
         <li id="whyHelpItem3">Skriv kort og konkret i hver boks.</li>
         <li id="whyHelpItem4">Stop når I har en årsag, I kan handle på (ikke nødvendigvis præcis 5).</li>
-        <li id="whyHelpItem5">Dot kan bruges til at markere den vigtigste gren.</li>
+        <li id="whyHelpItem5">Klik på prikken for at markere en rodårsag. Den kobles automatisk til Tiltag.</li>
       </ul>
     </div>
   </div>
@@ -199,6 +203,6 @@
   <script src="html2pdf.bundle.min.js"></script>
 
   <!-- Din kode -->
-  <script src="script.js?v=20260701v89"></script>
+  <script src="script.js?v=20260907v204test1"></script>
 </body>
 </html>

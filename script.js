@@ -1,5 +1,5 @@
 // =====================================================
-// Fiskeben ROPEX - Script.js (v70)
+// Fiskeben ROPEX - Script.js (v2.0.4-test)
 // Fokus: stabil app + PDF hvor hele 5xWhy er på én side
 // =====================================================
 
@@ -102,7 +102,7 @@ const I18N = {
     helpItem3: "Dobbeltklik på en boks for at redigere. Klik på × for at slette en årsag.",
     helpItem4: "Klik på 5xWHY-ikonet på en årsag - eller brug 5xWhy-knappen i toppen, hvis du kun vil lave en 5xWhy uden fiskeben.",
     helpItem5: "Brug “Ret M’er / ben” til at ændre antal ben og navnene på benene. Skriv antal ben fra 1-8, ret teksterne og tryk Gem.",
-    helpItem8: "Brug tiltagstabellen under diagrammet til at skrive dato, opgave, hvem og ROPEX nr.",
+    helpItem8: "Klik på “Opret tiltag” på en årsag i fiskebenet eller på prikken i 5xWhy for at oprette et koblet tiltag. Når der står “Tiltag tilføjet”, er markeringen kun en status; koblingen ændres eller fjernes under Tiltag. Flere opgaver kan kobles til samme årsag via Rodårsag-feltet.",
     helpItem9: "Brug Fortryd til at gå et trin tilbage, hvis du kommer til at slette, flytte eller ændre noget.",
     helpItem6: "Du kan gemme og åbne projekter som .json-filer.",
     helpItem7: "“Gem alt som PDF” laver en PDF med diagram, 5xWhy-træer, tiltagstabel og M-liste.",
@@ -113,7 +113,7 @@ const I18N = {
     whyHelpItem2: "Brug “+ Under-hvorfor” til at gå dybere (Hvorfor 1.1, 1.1.1 osv.).",
     whyHelpItem3: "Skriv kort og konkret i hver boks.",
     whyHelpItem4: "Stop når I har en årsag, I kan handle på (ikke nødvendigvis præcis 5).",
-    whyHelpItem5: "Dot kan bruges til at markere den vigtigste gren.",
+    whyHelpItem5: "Klik på prikken for at markere en rodårsag. Den bliver automatisk koblet til en række under Tiltag.",
 
     problemPlaceholder: "Problemet skrives her",
     problemTitle: "Skriv problemet her",
@@ -137,12 +137,26 @@ const I18N = {
     categoryReset: "Tilbage til 6 M’er",
 
     actionTableTitle: "Tiltag / opgaver",
+    actionTableRootCause: "Rodårsag",
     actionTableDate: "Dato",
     actionTableTask: "Opgave",
     actionTableWho: "Hvem",
     actionTableRopex: "ROPEX nr.",
     addActionRow: "+ Tilføj opgave",
     deleteActionRow: "Slet række",
+    rootCauseMark: "Opret tiltag fra denne årsag",
+    rootCauseCreateAction: "Opret tiltag",
+    rootCauseActionAdded: "Tiltag tilføjet",
+    rootCauseLinkedStatus: "Tiltag er tilføjet. Ændr eller fjern koblingen under Tiltag / opgaver.",
+    rootCauseUnmark: "Fjern koblingen til tiltag",
+    linkedRootCause: "Koblet til markeret rodårsag",
+    noRootCause: "Ingen valgt",
+    legacyRootCause: "Tidligere/manuelt angivet",
+    addActionForRootCause: "+ Tilføj tiltag",
+    actionRootCauseHint: "Opret flere opgaver med “+ Tilføj opgave” og vælg samme rodårsag i dropdownen. Opgaver kan også stå uden rodårsag og kobles senere.",
+    fishboneSourceLabel: "Fiskeben",
+    whySourceLabel: "5xWhy",
+    standaloneWhySourceLabel: "Selvstændig 5xWhy",
 
     whyPopupTitle: "5xWhy-træ for valgt årsag",
     standaloneWhyTitle: "Selvstændig 5xWhy",
@@ -189,7 +203,7 @@ const I18N = {
     helpItem3: "Dobbeltklikk på en boks for å redigere. Klikk på × for å slette en årsak.",
     helpItem4: "Klikk på 5xWHY-ikonet på en årsak - eller bruk 5xWhy-knappen øverst hvis du bare vil lage en 5xWhy uten fiskebein.",
     helpItem5: "Bruk “Endre M’er / bein” for å endre antall bein og navnene på beina. Skriv antall bein fra 1-8, endre tekstene og trykk Lagre.",
-    helpItem8: "Bruk oppgavetabellen under diagrammet til å skrive dato, oppgave, hvem og ROPEX nr.",
+    helpItem8: "Klikk på “Opprett tiltak” på en årsak i fiskebeinet eller på prikken i 5xWhy for å opprette et koblet tiltak. Når det står “Tiltak lagt til”, er markeringen kun en status; koblingen endres eller fjernes under Tiltak. Flere oppgaver kan kobles til samme årsak via Rotårsak-feltet.",
     helpItem9: "Bruk Angre for å gå ett trinn tilbake hvis du kommer til å slette, flytte eller endre noe.",
     helpItem6: "Du kan lagre og åpne prosjekter som .json-filer.",
     helpItem7: "«Lagre alt som PDF» lager en PDF med diagram, 5xWhy-trær, oppgavetabell og M-liste.",
@@ -200,7 +214,7 @@ const I18N = {
     whyHelpItem2: "Bruk “+ Under-hvorfor” for å gå dypere (Hvorfor 1.1, 1.1.1 osv.).",
     whyHelpItem3: "Skriv kort og konkret i hver boks.",
     whyHelpItem4: "Stopp når dere har en årsak dere kan handle på (ikke nødvendigvis nøyaktig 5).",
-    whyHelpItem5: "Prikken kan brukes til å markere den viktigste grenen.",
+    whyHelpItem5: "Klikk på prikken for å markere en rotårsak. Den kobles automatisk til en rad under Tiltak.",
 
     problemPlaceholder: "Problemet skrives her",
     problemTitle: "Skriv problemet her",
@@ -224,12 +238,26 @@ const I18N = {
     categoryReset: "Tilbake til 6 M’er",
 
     actionTableTitle: "Tiltak / oppgaver",
+    actionTableRootCause: "Rotårsak",
     actionTableDate: "Dato",
     actionTableTask: "Oppgave",
     actionTableWho: "Hvem",
     actionTableRopex: "ROPEX nr.",
     addActionRow: "+ Legg til oppgave",
     deleteActionRow: "Slett rad",
+    rootCauseMark: "Opprett tiltak fra denne årsaken",
+    rootCauseCreateAction: "Opprett tiltak",
+    rootCauseActionAdded: "Tiltak lagt til",
+    rootCauseLinkedStatus: "Tiltak er lagt til. Endre eller fjern koblingen under Tiltak / oppgaver.",
+    rootCauseUnmark: "Fjern koblingen til tiltak",
+    linkedRootCause: "Koblet til markert rotårsak",
+    noRootCause: "Ingen valgt",
+    legacyRootCause: "Tidligere/manuelt angitt",
+    addActionForRootCause: "+ Legg til tiltak",
+    actionRootCauseHint: "Opprett flere oppgaver med “+ Legg til oppgave” og velg samme rotårsak i nedtrekkslisten. Oppgaver kan også stå uten rotårsak og kobles senere.",
+    fishboneSourceLabel: "Fiskebein",
+    whySourceLabel: "5xWhy",
+    standaloneWhySourceLabel: "Selvstendig 5xWhy",
 
     whyPopupTitle: "5xWhy-tre for valgt årsak",
     standaloneWhyTitle: "Selvstendig 5xWhy",
@@ -275,7 +303,7 @@ const I18N = {
     helpItem3: "Double-click a box to edit it. Click × to delete a cause.",
     helpItem4: "Click the 5xWHY icon on a cause — or use the 5xWhy button at the top if you only want to create a 5xWhy without a fishbone.",
     helpItem5: "Use “Edit M’s / bones” to change the number of bones and their names. Enter 1–8 bones, edit the texts and press Save.",
-    helpItem8: "Use the action table below the diagram to enter date, task, responsible person and ROPEX no.",
+    helpItem8: "Click “Create action” on a fishbone cause or the dot in 5xWhy to create a linked action. Once it says “Action added”, the marker is status only; change or remove the link under Actions. Several tasks can be linked to the same cause using the Root cause dropdown.",
     helpItem9: "Use Undo to go one step back if you delete, move or change something by mistake.",
     helpItem6: "You can save and open projects as .json files.",
     helpItem7: "“Save all as PDF” creates a PDF with the diagram, 5xWhy trees, action table and M-list.",
@@ -286,7 +314,7 @@ const I18N = {
     whyHelpItem2: "Use “+ Sub-why” to go deeper (Why 1.1, 1.1.1 etc.).",
     whyHelpItem3: "Write briefly and concretely in each box.",
     whyHelpItem4: "Stop when you have a cause you can act on (not necessarily exactly 5).",
-    whyHelpItem5: "The dot can be used to mark the most important branch.",
+    whyHelpItem5: "Click the dot to mark a root cause. It is automatically linked to a row under Actions.",
 
     problemPlaceholder: "Write the problem here",
     problemTitle: "Write the problem here",
@@ -310,12 +338,26 @@ const I18N = {
     categoryReset: "Back to 6 M’s",
 
     actionTableTitle: "Actions / tasks",
+    actionTableRootCause: "Root cause",
     actionTableDate: "Date",
     actionTableTask: "Task",
     actionTableWho: "Who",
     actionTableRopex: "ROPEX no.",
     addActionRow: "+ Add task",
     deleteActionRow: "Delete row",
+    rootCauseMark: "Create action from this cause",
+    rootCauseCreateAction: "Create action",
+    rootCauseActionAdded: "Action added",
+    rootCauseLinkedStatus: "Action added. Change or remove the link under Actions / tasks.",
+    rootCauseUnmark: "Remove the action link",
+    linkedRootCause: "Linked to marked root cause",
+    noRootCause: "None selected",
+    legacyRootCause: "Previous/manual value",
+    addActionForRootCause: "+ Add action",
+    actionRootCauseHint: "Create more tasks with “+ Add task” and select the same root cause in the dropdown. Tasks can also remain unlinked and be connected later.",
+    fishboneSourceLabel: "Fishbone",
+    whySourceLabel: "5xWhy",
+    standaloneWhySourceLabel: "Standalone 5xWhy",
 
     whyPopupTitle: "5xWhy tree for selected cause",
     standaloneWhyTitle: "Standalone 5xWhy",
@@ -390,6 +432,7 @@ function applyLanguage() {
   const navActionBtn = document.getElementById("navActionBtn");
 
   const actionTableTitle = document.getElementById("actionTableTitle");
+  const actionHeaderRootCause = document.getElementById("actionHeaderRootCause");
   const actionHeaderDate = document.getElementById("actionHeaderDate");
   const actionHeaderTask = document.getElementById("actionHeaderTask");
   const actionHeaderWho = document.getElementById("actionHeaderWho");
@@ -449,6 +492,9 @@ function applyLanguage() {
   if (navActionBtn) navActionBtn.textContent = t("navAction");
 
   if (actionTableTitle) actionTableTitle.textContent = t("actionTableTitle");
+  const actionTableHint = document.getElementById("actionTableHint");
+  if (actionTableHint) actionTableHint.textContent = t("actionRootCauseHint");
+  if (actionHeaderRootCause) actionHeaderRootCause.textContent = t("actionTableRootCause");
   if (actionHeaderDate) actionHeaderDate.textContent = t("actionTableDate");
   if (actionHeaderTask) actionHeaderTask.textContent = t("actionTableTask");
   if (actionHeaderWho) actionHeaderWho.textContent = t("actionTableWho");
@@ -547,6 +593,8 @@ function applyLanguage() {
       deleteBtn.setAttribute("aria-label", t("deleteCause"));
     }
 
+    if (typeof updateRootCauseToggle === "function") updateRootCauseToggle(div);
+
     if (div.classList.contains("placeholder")) {
       div.textContent = t("causePlaceholder");
     }
@@ -566,6 +614,11 @@ function applyLanguage() {
 
   if (typeof renderStandaloneAndAutoSizeTree === "function") {
     renderStandaloneAndAutoSizeTree();
+  }
+
+  if (typeof getActionRows === "function" && typeof setActionRows === "function") {
+    const currentRows = getActionRows();
+    if (currentRows.length) setActionRows(currentRows);
   }
 }
 
@@ -613,6 +666,28 @@ function escapeHTML(str) {
 
 function deepClone(obj) {
   return JSON.parse(JSON.stringify(obj));
+}
+
+function createStableId(prefix = "id") {
+  try {
+    if (window.crypto && typeof window.crypto.randomUUID === "function") {
+      return `${prefix}-${window.crypto.randomUUID()}`;
+    }
+  } catch (_) {}
+  return `${prefix}-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 10)}`;
+}
+
+function ensureWhyNodeIds(tree, prefix = "why") {
+  if (!Array.isArray(tree)) return [];
+  tree.forEach(node => {
+    if (!node || typeof node !== "object") return;
+    if (!node.id) node.id = createStableId(prefix);
+    node.q = sanitizeTextContent(node.q || "");
+    node.selectedAction = Boolean(node.selectedAction);
+    node.children = Array.isArray(node.children) ? node.children : [];
+    ensureWhyNodeIds(node.children, prefix);
+  });
+  return tree;
 }
 
 function clamp(val, min, max) {
@@ -709,13 +784,16 @@ function restoreProjectData(data) {
         y: cause.y || 0,
         text: cause.text || "",
         whyTree: Array.isArray(cause.whyTree) ? cause.whyTree : [],
-        categoryIndex: cause.categoryIndex
+        categoryIndex: cause.categoryIndex,
+        id: cause.id,
+        selectedRootCause: Boolean(cause.selectedRootCause)
       });
       causesDiv.appendChild(div);
     });
   }
 
   setActionRows(restored.actions || []);
+  syncLinkedActions();
   applyLanguage();
   document.querySelectorAll("#causes .causeBox").forEach(div => {
     if (getStoredCategoryIndex(div) === null) updateCauseCategoryFromPosition(div);
@@ -1329,6 +1407,44 @@ function addWhyIcon(div) {
   updateWhyIcon(div);
 }
 
+function updateRootCauseToggle(div) {
+  if (!div) return;
+  const selected = div.dataset.rootCauseSelected === "true";
+  div.classList.toggle("selected-root-cause", selected);
+  const btn = div.querySelector(".root-cause-toggle");
+  if (!btn) return;
+  btn.classList.toggle("selected", selected);
+  btn.setAttribute("aria-pressed", selected ? "true" : "false");
+  btn.setAttribute("aria-disabled", selected ? "true" : "false");
+  btn.textContent = selected ? t("rootCauseActionAdded") : t("rootCauseCreateAction");
+  btn.title = selected ? t("rootCauseLinkedStatus") : t("rootCauseMark");
+  btn.setAttribute("aria-label", btn.title);
+}
+
+function addRootCauseToggle(div) {
+  const btn = document.createElement("button");
+  btn.type = "button";
+  btn.className = "root-cause-toggle";
+  btn.addEventListener("mousedown", ev => ev.stopPropagation());
+  btn.addEventListener("click", (ev) => {
+    ev.preventDefault();
+    ev.stopPropagation();
+
+    // A selected marker is deliberately status-only. Removing the link from the
+    // cause itself used to be too easy and could remove an action by accident.
+    // Links are changed/removed explicitly in the Actions table instead.
+    if (div.dataset.rootCauseSelected === "true") return;
+
+    const before = buildProjectData();
+    div.dataset.rootCauseSelected = "true";
+    updateRootCauseToggle(div);
+    syncLinkedActions();
+    pushUndoSnapshot(before);
+  });
+  div.appendChild(btn);
+  updateRootCauseToggle(div);
+}
+
 function addDeleteCauseButton(div) {
   const btn = document.createElement("button");
   btn.type = "button";
@@ -1353,19 +1469,22 @@ function addDeleteCauseButton(div) {
     }
 
     div.remove();
+    syncLinkedActions();
   });
 
   div.appendChild(btn);
 }
 
-function createCauseBox({ x, y, text = "", whyTree = [], categoryIndex = null }) {
+function createCauseBox({ x, y, text = "", whyTree = [], categoryIndex = null, id = null, selectedRootCause = false }) {
   const div = document.createElement("div");
   div.className = "causeBox";
   div.style.left = px(x);
   div.dataset.baseY = String(y || 0);
   div.style.top = px((y || 0) + currentFishboneOffsetY);
   div.title = "Dobbeltklik for at redigere";
-  div._whyTree = Array.isArray(whyTree) ? deepClone(whyTree) : [];
+  div.dataset.causeId = id || createStableId("cause");
+  div.dataset.rootCauseSelected = selectedRootCause ? "true" : "false";
+  div._whyTree = ensureWhyNodeIds(Array.isArray(whyTree) ? deepClone(whyTree) : [], "why");
 
   const parsedCategoryIndex = parseInt(categoryIndex, 10);
   if (!Number.isNaN(parsedCategoryIndex) && parsedCategoryIndex >= 0 && parsedCategoryIndex < categoryCount) {
@@ -1378,6 +1497,7 @@ function createCauseBox({ x, y, text = "", whyTree = [], categoryIndex = null })
   div.appendChild(span);
 
   addDeleteCauseButton(div);
+  addRootCauseToggle(div);
   addWhyIcon(div);
   reserveSpaceForWhy(div);
 
@@ -1415,6 +1535,7 @@ function openEditCauseInput(div) {
     if (val && val !== originalText) {
       pushUndoSnapshot(undoSnapshot);
       setCauseText(div, val);
+      syncLinkedActions();
     }
     reserveSpaceForWhy(div);
     textarea.remove();
@@ -1489,6 +1610,7 @@ function submitText() {
   pushUndoState();
   causesDiv.appendChild(div);
   updateCauseCategoryFromPosition(div);
+  refreshActionRootCauseSelectors();
   closePopup();
 }
 
@@ -1584,6 +1706,7 @@ function initDiagramInteractions() {
     if (!box) return;
     if (e.target.closest(".why-icon")) return;
     if (e.target.closest(".delete-cause-btn")) return;
+    if (e.target.closest(".root-cause-toggle")) return;
 
     // Lad browserens resize-håndtag virke nederst til højre
     const rect = box.getBoundingClientRect();
@@ -1681,6 +1804,7 @@ function initStandaloneWhyTitle() {
 
   titleInput.addEventListener("input", () => {
     standaloneWhyTitle = titleInput.classList.contains("placeholder") ? "" : sanitizeTextContent(titleInput.textContent || "");
+    syncLinkedActions();
   });
 }
 
@@ -1696,6 +1820,7 @@ function renderStandaloneWhyTree(tree, parentEl, parentPath = []) {
   const nodes = Array.isArray(tree) ? tree : [];
 
   nodes.forEach((node, idx) => {
+    if (!node.id) node.id = createStableId("why");
     const path = parentPath.concat(idx + 1);
     const levelLabel = t("why") + " " + path.join(".");
 
@@ -1705,25 +1830,30 @@ function renderStandaloneWhyTree(tree, parentEl, parentPath = []) {
     const left = document.createElement("div");
     left.className = "tree5why-left";
 
-    if (parentPath.length > 0) {
-      const dot = document.createElement("span");
-      dot.className = "tree5why-dot";
+    const dot = document.createElement("span");
+    dot.className = "tree5why-dot";
+    dot.title = node.selectedAction ? t("rootCauseLinkedStatus") : t("rootCauseMark");
+    dot.setAttribute("role", "button");
+    dot.setAttribute("aria-label", dot.title);
+    dot.setAttribute("aria-pressed", node.selectedAction ? "true" : "false");
+    dot.setAttribute("aria-disabled", node.selectedAction ? "true" : "false");
 
-      if (node.selectedAction) {
-        dot.classList.add("selected-action");
-        nodeDiv.classList.add("selected-action");
-      }
-
-      dot.addEventListener("click", (ev) => {
-        ev.stopPropagation();
-        const before = buildProjectData();
-        node.selectedAction = !node.selectedAction;
-        renderStandaloneAndAutoSizeTree();
-        pushUndoSnapshot(before);
-      });
-
-      left.appendChild(dot);
+    if (node.selectedAction) {
+      dot.classList.add("selected-action");
+      nodeDiv.classList.add("selected-action");
     }
+
+    dot.addEventListener("click", (ev) => {
+      ev.stopPropagation();
+      if (node.selectedAction) return;
+      const before = buildProjectData();
+      node.selectedAction = true;
+      syncLinkedActions();
+      renderStandaloneAndAutoSizeTree();
+      pushUndoSnapshot(before);
+    });
+
+    left.appendChild(dot);
 
     nodeDiv.appendChild(left);
 
@@ -1753,6 +1883,8 @@ function renderStandaloneWhyTree(tree, parentEl, parentPath = []) {
 
     inp.addEventListener("input", () => {
       node.q = inp.value;
+      if (node.selectedAction) syncLinkedActions();
+      else refreshActionRootCauseSelectors();
       autoSizeTA(inp);
     });
 
@@ -1778,7 +1910,7 @@ function renderStandaloneWhyTree(tree, parentEl, parentPath = []) {
     addBtn.addEventListener("click", () => {
       const before = buildProjectData();
       node.children = node.children || [];
-      node.children.push({ q: "", children: [] });
+      node.children.push({ id: createStableId("why"), q: "", children: [], selectedAction: false });
       renderStandaloneAndAutoSizeTree();
       pushUndoSnapshot(before);
     });
@@ -1795,6 +1927,7 @@ function renderStandaloneWhyTree(tree, parentEl, parentPath = []) {
       if (!canDelete) return;
       const before = buildProjectData();
       tree.splice(idx, 1);
+      syncLinkedActions();
       renderStandaloneAndAutoSizeTree();
       pushUndoSnapshot(before);
     });
@@ -1824,7 +1957,7 @@ function renderStandaloneAndAutoSizeTree() {
 
 function addStandaloneRootWhy() {
   const before = buildProjectData();
-  standaloneWhyTree.push({ q: "", children: [] });
+  standaloneWhyTree.push({ id: createStableId("why"), q: "", children: [], selectedAction: false });
   renderStandaloneAndAutoSizeTree();
   pushUndoSnapshot(before);
 }
@@ -1863,6 +1996,7 @@ function renderWhyTree(tree, parentEl, parentPath = []) {
   const nodes = Array.isArray(tree) ? tree : [];
 
   nodes.forEach((node, idx) => {
+    if (!node.id) node.id = createStableId("why");
     const path = parentPath.concat(idx + 1);
     const levelLabel = t("why") + " " + path.join(".");
 
@@ -1872,23 +2006,27 @@ function renderWhyTree(tree, parentEl, parentPath = []) {
     const left = document.createElement("div");
     left.className = "tree5why-left";
 
-    if (parentPath.length > 0) {
-      const dot = document.createElement("span");
-      dot.className = "tree5why-dot";
+    const dot = document.createElement("span");
+    dot.className = "tree5why-dot";
+    dot.title = node.selectedAction ? t("rootCauseLinkedStatus") : t("rootCauseMark");
+    dot.setAttribute("role", "button");
+    dot.setAttribute("aria-label", dot.title);
+    dot.setAttribute("aria-pressed", node.selectedAction ? "true" : "false");
+    dot.setAttribute("aria-disabled", node.selectedAction ? "true" : "false");
 
-      if (node.selectedAction) {
-        dot.classList.add("selected-action");
-        nodeDiv.classList.add("selected-action");
-      }
-
-      dot.addEventListener("click", (ev) => {
-        ev.stopPropagation();
-        node.selectedAction = !node.selectedAction;
-        renderAndAutoSizeTree();
-      });
-
-      left.appendChild(dot);
+    if (node.selectedAction) {
+      dot.classList.add("selected-action");
+      nodeDiv.classList.add("selected-action");
     }
+
+    dot.addEventListener("click", (ev) => {
+      ev.stopPropagation();
+      if (node.selectedAction) return;
+      node.selectedAction = true;
+      renderAndAutoSizeTree();
+    });
+
+    left.appendChild(dot);
 
     nodeDiv.appendChild(left);
 
@@ -1909,6 +2047,7 @@ function renderWhyTree(tree, parentEl, parentPath = []) {
     inp.value = node.q || "";
     inp.addEventListener("input", () => {
       node.q = inp.value;
+      refreshActionRootCauseSelectors();
       autoSizeTA(inp);
     });
     inp.addEventListener("focus", () => {
@@ -1925,7 +2064,7 @@ function renderWhyTree(tree, parentEl, parentPath = []) {
     addBtn.textContent = t("addSubWhy");
     addBtn.addEventListener("click", () => {
       node.children = node.children || [];
-      node.children.push({ q: "", children: [] });
+      node.children.push({ id: createStableId("why"), q: "", children: [], selectedAction: false });
       renderAndAutoSizeTree();
     });
     actionsInline.appendChild(addBtn);
@@ -1987,7 +2126,7 @@ function openWhyTreeForBox(boxDiv) {
   const causeEl = document.getElementById("whyTreeCause");
   if (causeEl) causeEl.textContent = causeText;
 
-  window.whyTree = boxDiv._whyTree ? deepClone(boxDiv._whyTree) : [];
+  window.whyTree = ensureWhyNodeIds(boxDiv._whyTree ? deepClone(boxDiv._whyTree) : [], "why");
   showWhyTreePopup();
 }
 
@@ -2007,8 +2146,9 @@ function closeWhyTreePopup(save) {
 
     if (currentWhyBox) {
       const oldTree = JSON.stringify(currentWhyBox._whyTree || []);
-      currentWhyBox._whyTree = deepClone(window.whyTree);
+      currentWhyBox._whyTree = ensureWhyNodeIds(deepClone(window.whyTree), "why");
       updateWhyIcon(currentWhyBox);
+      syncLinkedActions();
 
       if (oldTree !== newTree) {
         pushUndoSnapshot(before);
@@ -2032,7 +2172,7 @@ function closeWhyTreePopup(save) {
 }
 
 function addWhy(tree) {
-  const node = { q: "", children: [] };
+  const node = { id: createStableId("why"), q: "", children: [], selectedAction: false };
   tree.push(node);
   renderAndAutoSizeTree();
 }
@@ -2054,9 +2194,7 @@ function autoSizeAllActionInputs() {
 function normalizeDateForInput(value) {
   const txt = sanitizeTextContent(value || "");
   if (!txt) return "";
-
   if (/^\d{4}-\d{2}-\d{2}$/.test(txt)) return txt;
-
   const match = txt.match(/^(\d{1,2})[-/.](\d{1,2})[-/.](\d{4})$/);
   if (match) {
     const day = match[1].padStart(2, "0");
@@ -2064,7 +2202,6 @@ function normalizeDateForInput(value) {
     const year = match[3];
     return `${year}-${month}-${day}`;
   }
-
   return "";
 }
 
@@ -2075,10 +2212,9 @@ function formatDateForDisplay(value) {
   return txt;
 }
 
-function createActionInput(field, value, extraClass = "") {
+function createActionInput(field, value, extraClass = "", options = {}) {
   const isDate = field === "date";
   const input = isDate ? document.createElement("input") : document.createElement("textarea");
-
   input.className = `action-cell-input ${extraClass}`.trim();
   input.dataset.field = field;
 
@@ -2092,52 +2228,232 @@ function createActionInput(field, value, extraClass = "") {
   }
 
   let undoSnapshot = null;
-
-  input.addEventListener("focus", () => {
-    undoSnapshot = buildProjectData();
-  });
-
-  input.addEventListener("input", () => {
-    if (!isDate) autoSizeActionInput(input);
-  });
-
+  input.addEventListener("focus", () => { undoSnapshot = buildProjectData(); });
+  input.addEventListener("input", () => { if (!isDate) autoSizeActionInput(input); });
   input.addEventListener("blur", () => {
     const before = undoSnapshot;
-
     if (!isDate) {
       input.value = sanitizeTextContent(input.value);
       autoSizeActionInput(input);
     }
-
-    if (before && JSON.stringify(before) !== JSON.stringify(buildProjectData())) {
-      pushUndoSnapshot(before);
-    }
+    if (before && JSON.stringify(before) !== JSON.stringify(buildProjectData())) pushUndoSnapshot(before);
     undoSnapshot = null;
   });
-
   return input;
+}
+
+function getWhyOptionLabel(context, text) {
+  const cleanContext = sanitizeTextContent(context || "");
+  const cleanText = sanitizeTextContent(text || "");
+  return cleanContext ? `${cleanContext} → ${cleanText}` : cleanText;
+}
+
+function collectAvailableRootCauses() {
+  const options = [];
+  const seen = new Set();
+
+  const addOption = (source, ref, text, context, label, fullLabel) => {
+    const cleanText = sanitizeTextContent(text || "");
+    if (!source || !ref || !cleanText) return;
+    const key = `${source}::${ref}`;
+    if (seen.has(key)) return;
+    seen.add(key);
+    options.push({
+      rootCauseSource: source,
+      rootCauseRef: ref,
+      rootCause: cleanText,
+      rootCauseContext: sanitizeTextContent(context || ""),
+      label: sanitizeTextContent(label || cleanText),
+      fullLabel: sanitizeTextContent(fullLabel || label || cleanText)
+    });
+  };
+
+  const walkWhy = (tree, source, context, sourceLabel) => {
+    ensureWhyNodeIds(tree, "why").forEach(node => {
+      const text = sanitizeTextContent(node.q || "");
+      if (text) {
+        addOption(
+          source,
+          node.id,
+          text,
+          context || "",
+          `5W · ${text}`,
+          `[${sourceLabel}] ${getWhyOptionLabel(context, text)}`
+        );
+      }
+      if (Array.isArray(node.children) && node.children.length) {
+        walkWhy(node.children, source, context, sourceLabel);
+      }
+    });
+  };
+
+  document.querySelectorAll("#causes .causeBox").forEach(div => {
+    const causeId = div.dataset.causeId || createStableId("cause");
+    div.dataset.causeId = causeId;
+    const causeText = sanitizeTextContent(getCauseText(div));
+    if (causeText) {
+      const mCategory = getMCatFromPos(div);
+      const context = mCategory ? `${mCategory}` : "";
+      const suffix = context ? ` · ${context}` : "";
+      addOption(
+        "fishbone",
+        causeId,
+        causeText,
+        causeText,
+        `F · ${causeText}`,
+        `[${t("fishboneSourceLabel")}${suffix}] ${causeText}`
+      );
+    }
+    walkWhy(div._whyTree || [], "fishbone-why", causeText, t("whySourceLabel"));
+  });
+
+  const standaloneContext = getStandaloneWhyTitleText();
+  walkWhy(
+    standaloneWhyTree || [],
+    "standalone-why",
+    standaloneContext,
+    t("standaloneWhySourceLabel")
+  );
+
+  return options;
+}
+
+function findAvailableRootCause(source, ref) {
+  if (!source || !ref) return null;
+  return collectAvailableRootCauses().find(item => item.rootCauseSource === source && item.rootCauseRef === ref) || null;
+}
+
+function createRootCauseSelect(row, tr) {
+  const select = document.createElement("select");
+  select.className = "action-root-cause-select";
+  select.dataset.field = "rootCauseSelect";
+
+  const blank = document.createElement("option");
+  blank.value = "";
+  blank.textContent = t("noRootCause");
+  select.appendChild(blank);
+
+  const available = collectAvailableRootCauses();
+  available.forEach(item => {
+    const opt = document.createElement("option");
+    opt.value = `${item.rootCauseSource}::${item.rootCauseRef}`;
+    opt.textContent = item.label;
+    opt.title = item.fullLabel || item.label;
+    opt.dataset.fullLabel = item.fullLabel || item.label;
+    opt.dataset.rootCause = item.rootCause;
+    opt.dataset.rootCauseContext = item.rootCauseContext;
+    select.appendChild(opt);
+  });
+
+  const currentSource = row.rootCauseSource || "";
+  const currentRef = row.rootCauseRef || "";
+  const currentKey = currentSource && currentRef ? `${currentSource}::${currentRef}` : "";
+  const matchingOption = currentKey ? Array.from(select.options).find(opt => opt.value === currentKey) : null;
+
+  if (matchingOption) {
+    select.value = currentKey;
+  } else if (row.rootCause && !currentKey) {
+    const legacy = document.createElement("option");
+    legacy.value = "__legacy__";
+    legacy.textContent = `${t("legacyRootCause")}: ${row.rootCause}`;
+    legacy.dataset.rootCause = row.rootCause;
+    legacy.title = legacy.textContent;
+    legacy.dataset.fullLabel = legacy.textContent;
+    select.appendChild(legacy);
+    select.value = "__legacy__";
+  } else {
+    select.value = "";
+  }
+
+  const updateSelectTooltip = () => {
+    const selectedOption = select.selectedOptions && select.selectedOptions[0];
+    select.title = selectedOption
+      ? (selectedOption.dataset.fullLabel || selectedOption.title || selectedOption.textContent || "")
+      : "";
+  };
+  updateSelectTooltip();
+
+  select.addEventListener("change", () => {
+    const before = buildProjectData();
+    const oldSource = tr.dataset.rootCauseSource || "";
+    const oldRef = tr.dataset.rootCauseRef || "";
+    const selectedValue = select.value;
+
+    if (!selectedValue || selectedValue === "__legacy__") {
+      tr.dataset.rootCauseSource = "";
+      tr.dataset.rootCauseRef = "";
+      tr.dataset.rootCauseContext = "";
+      tr.dataset.rootCauseText = selectedValue === "__legacy__" ? (select.selectedOptions[0]?.dataset.rootCause || "") : "";
+
+      if (oldSource && oldRef && !hasOtherLinkedAction(oldSource, oldRef, tr)) {
+        unmarkRootCauseByRef(oldSource, oldRef);
+      }
+    } else {
+      const [source, ...refParts] = selectedValue.split("::");
+      const ref = refParts.join("::");
+      const chosen = findAvailableRootCause(source, ref);
+      if (chosen) {
+        tr.dataset.rootCauseSource = chosen.rootCauseSource;
+        tr.dataset.rootCauseRef = chosen.rootCauseRef;
+        tr.dataset.rootCauseContext = chosen.rootCauseContext || "";
+        tr.dataset.rootCauseText = chosen.rootCause || "";
+        markRootCauseByRef(chosen.rootCauseSource, chosen.rootCauseRef);
+      }
+
+      if (oldSource && oldRef && (oldSource !== source || oldRef !== ref) && !hasOtherLinkedAction(oldSource, oldRef, tr)) {
+        unmarkRootCauseByRef(oldSource, oldRef);
+      }
+    }
+
+    updateSelectTooltip();
+    syncLinkedActions();
+    pushUndoSnapshot(before);
+  });
+
+  return select;
+}
+
+function hasOtherLinkedAction(source, ref, excludeTr = null) {
+  if (!source || !ref) return false;
+  return Array.from(document.querySelectorAll("#actionTableBody tr")).some(row => {
+    if (row === excludeTr) return false;
+    return row.dataset.rootCauseSource === source && row.dataset.rootCauseRef === ref;
+  });
 }
 
 function createActionRow(row = {}) {
   const tr = document.createElement("tr");
+  tr.dataset.actionId = row.id || createStableId("action");
+  tr.dataset.rootCauseSource = row.rootCauseSource || "";
+  tr.dataset.rootCauseRef = row.rootCauseRef || "";
+  tr.dataset.rootCauseContext = row.rootCauseContext || "";
+  tr.dataset.rootCauseText = row.rootCause || "";
+
+  const linked = Boolean(tr.dataset.rootCauseSource && tr.dataset.rootCauseRef);
+  tr.classList.toggle("linked-action-row", linked);
+
+  const rootTd = document.createElement("td");
+  rootTd.className = "action-root-cause-cell";
+  const select = createRootCauseSelect(row, tr);
+  rootTd.appendChild(select);
+
+  tr.appendChild(rootTd);
 
   const fields = [
-    ["date", row.date, "action-date-input"],
     ["task", row.task, "action-task-input"],
+    ["date", row.date, "action-date-input"],
     ["who", row.who, "action-who-input"],
     ["ropex", row.ropex, "action-ropex-input"]
   ];
 
   fields.forEach(([field, value, className]) => {
     const td = document.createElement("td");
-    const input = createActionInput(field, value, className);
-    td.appendChild(input);
+    td.appendChild(createActionInput(field, value, className));
     tr.appendChild(td);
   });
 
   const deleteTd = document.createElement("td");
   deleteTd.className = "action-delete-cell";
-
   const deleteBtn = document.createElement("button");
   deleteBtn.type = "button";
   deleteBtn.className = "delete-action-row-btn";
@@ -2146,20 +2462,22 @@ function createActionRow(row = {}) {
   deleteBtn.textContent = "×";
   deleteBtn.addEventListener("click", () => {
     pushUndoState();
+    const source = tr.dataset.rootCauseSource || "";
+    const ref = tr.dataset.rootCauseRef || "";
     tr.remove();
-    const body = document.getElementById("actionTableBody");
-    if (body && body.children.length === 0) {
-      addActionRow();
-    }
-  });
 
+    if (source && ref && !hasOtherLinkedAction(source, ref)) {
+      unmarkRootCauseByRef(source, ref);
+    }
+
+    syncLinkedActions();
+    const body = document.getElementById("actionTableBody");
+    if (body && body.children.length === 0) addActionRow();
+  });
   deleteTd.appendChild(deleteBtn);
   tr.appendChild(deleteTd);
 
-  requestAnimationFrame(() => {
-    tr.querySelectorAll(".action-cell-input").forEach(autoSizeActionInput);
-  });
-
+  requestAnimationFrame(() => tr.querySelectorAll(".action-cell-input").forEach(autoSizeActionInput));
   return tr;
 }
 
@@ -2176,9 +2494,22 @@ function getActionRows() {
       return sanitizeTextContent(input ? input.value : "");
     };
 
+    const source = tr.dataset.rootCauseSource || "";
+    const ref = tr.dataset.rootCauseRef || "";
+    const linked = source && ref ? findAvailableRootCause(source, ref) : null;
+    const legacySelect = tr.querySelector('.action-root-cause-select option[value="__legacy__"]:checked');
+    const rootCause = linked
+      ? linked.rootCause
+      : sanitizeTextContent(tr.dataset.rootCauseText || (legacySelect ? legacySelect.dataset.rootCause : ""));
+
     return {
-      date: getValue("date"),
+      id: tr.dataset.actionId || createStableId("action"),
+      rootCause,
+      rootCauseSource: source,
+      rootCauseRef: ref,
+      rootCauseContext: linked ? (linked.rootCauseContext || "") : (tr.dataset.rootCauseContext || ""),
       task: getValue("task"),
+      date: getValue("date"),
       who: getValue("who"),
       ropex: getValue("ropex")
     };
@@ -2186,24 +2517,186 @@ function getActionRows() {
 }
 
 function getFilledActionRows() {
-  return getActionRows().filter(row => {
-    return row.date || row.task || row.who || row.ropex;
-  });
+  return getActionRows().filter(row => row.rootCause || row.date || row.task || row.who || row.ropex);
 }
 
 function setActionRows(rows) {
   const body = document.getElementById("actionTableBody");
   if (!body) return;
-
   body.innerHTML = "";
+  if (Array.isArray(rows) && rows.length > 0) rows.forEach(row => addActionRow(row));
+  else addActionRow();
+  requestAnimationFrame(autoSizeAllActionInputs);
+}
 
-  if (Array.isArray(rows) && rows.length > 0) {
-    rows.forEach(row => addActionRow(row));
-  } else {
-    addActionRow();
+function refreshActionRootCauseSelectors() {
+  const rows = getActionRows();
+  if (!rows.length) return;
+  setActionRows(rows);
+}
+
+function collectMarkedRootCauses() {
+  const marked = [];
+  const walkWhy = (tree, source, context) => {
+    ensureWhyNodeIds(tree, "why").forEach(node => {
+      const text = sanitizeTextContent(node.q || "");
+      if (node.selectedAction && text) {
+        marked.push({ rootCauseSource: source, rootCauseRef: node.id, rootCause: text, rootCauseContext: context || "" });
+      }
+      if (Array.isArray(node.children) && node.children.length) walkWhy(node.children, source, context);
+    });
+  };
+
+  document.querySelectorAll("#causes .causeBox").forEach(div => {
+    const causeId = div.dataset.causeId || createStableId("cause");
+    div.dataset.causeId = causeId;
+    const causeText = getCauseText(div);
+    if (div.dataset.rootCauseSelected === "true" && causeText) {
+      marked.push({ rootCauseSource: "fishbone", rootCauseRef: causeId, rootCause: causeText, rootCauseContext: causeText });
+    }
+    walkWhy(div._whyTree || [], "fishbone-why", causeText);
+  });
+
+  walkWhy(standaloneWhyTree || [], "standalone-why", getStandaloneWhyTitleText());
+  return marked;
+}
+
+function actionHasManualContent(row) {
+  return Boolean(row.task || row.date || row.who || row.ropex);
+}
+
+function findWhyNodeById(tree, id) {
+  if (!Array.isArray(tree) || !id) return null;
+  for (const node of tree) {
+    if (!node || typeof node !== "object") continue;
+    if (node.id === id) return node;
+    const found = findWhyNodeById(node.children, id);
+    if (found) return found;
+  }
+  return null;
+}
+
+function markRootCauseByRef(source, ref) {
+  if (!source || !ref) return;
+
+  if (source === "fishbone") {
+    const div = Array.from(document.querySelectorAll("#causes .causeBox"))
+      .find(box => box.dataset.causeId === ref);
+    if (div) {
+      div.dataset.rootCauseSelected = "true";
+      updateRootCauseToggle(div);
+    }
+    return;
   }
 
-  requestAnimationFrame(autoSizeAllActionInputs);
+  if (source === "fishbone-why") {
+    for (const div of document.querySelectorAll("#causes .causeBox")) {
+      const node = findWhyNodeById(div._whyTree || [], ref);
+      if (node) {
+        node.selectedAction = true;
+        if (currentWhyBox === div && Array.isArray(window.whyTree)) {
+          const popupNode = findWhyNodeById(window.whyTree, ref);
+          if (popupNode) popupNode.selectedAction = true;
+        }
+        return;
+      }
+    }
+    return;
+  }
+
+  if (source === "standalone-why") {
+    const node = findWhyNodeById(standaloneWhyTree || [], ref);
+    if (node) {
+      node.selectedAction = true;
+      renderStandaloneAndAutoSizeTree();
+    }
+  }
+}
+
+function unmarkRootCauseByRef(source, ref) {
+  if (!source || !ref) return;
+  if (source === "fishbone") {
+    const div = Array.from(document.querySelectorAll("#causes .causeBox"))
+      .find(box => box.dataset.causeId === ref);
+    if (div) {
+      div.dataset.rootCauseSelected = "false";
+      updateRootCauseToggle(div);
+    }
+    return;
+  }
+
+  if (source === "fishbone-why") {
+    for (const div of document.querySelectorAll("#causes .causeBox")) {
+      const node = findWhyNodeById(div._whyTree || [], ref);
+      if (node) {
+        node.selectedAction = false;
+        if (currentWhyBox === div && Array.isArray(window.whyTree)) {
+          const popupNode = findWhyNodeById(window.whyTree, ref);
+          if (popupNode) popupNode.selectedAction = false;
+        }
+        return;
+      }
+    }
+    return;
+  }
+
+  if (source === "standalone-why") {
+    const node = findWhyNodeById(standaloneWhyTree || [], ref);
+    if (node) {
+      node.selectedAction = false;
+      renderStandaloneAndAutoSizeTree();
+    }
+  }
+}
+
+function syncLinkedActions() {
+  const body = document.getElementById("actionTableBody");
+  if (!body) return;
+
+  const marked = collectMarkedRootCauses();
+  const markedByKey = new Map(marked.map(item => [`${item.rootCauseSource}::${item.rootCauseRef}`, item]));
+  const linkedKeys = new Set();
+  let rows = getActionRows();
+
+  const onlyDefaultBlankRow = rows.length === 1 && !rows[0].rootCauseSource && !rows[0].rootCauseRef &&
+    !rows[0].rootCause && !rows[0].task && !rows[0].date && !rows[0].who && !rows[0].ropex;
+  if (onlyDefaultBlankRow && markedByKey.size > 0) rows = [];
+
+  rows = rows.flatMap(row => {
+    if (!row.rootCauseSource || !row.rootCauseRef) return [row];
+
+    const key = `${row.rootCauseSource}::${row.rootCauseRef}`;
+    const current = markedByKey.get(key);
+    if (current) {
+      linkedKeys.add(key);
+      return [{ ...row, rootCause: current.rootCause, rootCauseContext: current.rootCauseContext }];
+    }
+
+    if (actionHasManualContent(row)) {
+      return [{
+        ...row,
+        rootCause: "",
+        rootCauseSource: "",
+        rootCauseRef: "",
+        rootCauseContext: ""
+      }];
+    }
+    return [];
+  });
+
+  markedByKey.forEach((item, key) => {
+    if (linkedKeys.has(key)) return;
+    rows.push({
+      id: createStableId("action"),
+      rootCause: item.rootCause,
+      rootCauseSource: item.rootCauseSource,
+      rootCauseRef: item.rootCauseRef,
+      rootCauseContext: item.rootCauseContext,
+      task: "", date: "", who: "", ropex: ""
+    });
+  });
+
+  setActionRows(rows.length ? rows : []);
 }
 
 function initActionTable() {
@@ -2214,11 +2707,8 @@ function initActionTable() {
       addActionRow();
     });
   }
-
   const body = document.getElementById("actionTableBody");
-  if (body && body.children.length === 0) {
-    addActionRow();
-  }
+  if (body && body.children.length === 0) addActionRow();
 }
 
 // =====================================================
@@ -2239,9 +2729,11 @@ function buildProjectData() {
   document.querySelectorAll("#causes .causeBox").forEach(div => {
     const storedIndex = getStoredCategoryIndex(div);
     causes.push({
+      id: div.dataset.causeId || createStableId("cause"),
       x: parseInt(div.style.left, 10) || 0,
       y: Math.round(getCauseBaseY(div)),
       text: getCauseText(div),
+      selectedRootCause: div.dataset.rootCauseSelected === "true",
       categoryIndex: storedIndex !== null ? storedIndex : getNearestCategoryIndexForBox(div, getMLabelPositionData()),
       whyTree: Array.isArray(div._whyTree) ? deepClone(div._whyTree) : []
     });
@@ -2252,7 +2744,7 @@ function buildProjectData() {
     : (problemBox.innerText || problemBox.textContent);
 
   return {
-    appVersion: 8,
+    appVersion: 10,
     language: normalizeLanguage(currentLanguage),
     analysisType: "fishbone",
     categoryPreset: categoryNames ? "fishbone_custom" : "fishbone_6m",
@@ -2354,17 +2846,24 @@ function migrateProjectData(data) {
           : null;
 
         return {
+          id: cause && cause.id ? String(cause.id) : createStableId("cause"),
           x: cause && cause.x || 0,
           y: cause && cause.y || 0,
           text: sanitizeTextContent(cause && cause.text),
+          selectedRootCause: Boolean(cause && cause.selectedRootCause),
           categoryIndex,
-          whyTree: Array.isArray(cause && cause.whyTree) ? cause.whyTree : []
+          whyTree: ensureWhyNodeIds(Array.isArray(cause && cause.whyTree) ? deepClone(cause.whyTree) : [], "why")
         };
       })
     : [];
 
   cloned.actions = Array.isArray(cloned.actions)
     ? cloned.actions.map(row => ({
+        id: row && row.id ? String(row.id) : createStableId("action"),
+        rootCause: sanitizeTextContent(row && row.rootCause),
+        rootCauseSource: sanitizeTextContent(row && row.rootCauseSource),
+        rootCauseRef: sanitizeTextContent(row && row.rootCauseRef),
+        rootCauseContext: sanitizeTextContent(row && row.rootCauseContext),
         date: sanitizeTextContent(row && row.date),
         task: sanitizeTextContent(row && row.task),
         who: sanitizeTextContent(row && row.who),
@@ -2373,7 +2872,7 @@ function migrateProjectData(data) {
     : [];
 
   cloned.standaloneWhyTree = Array.isArray(cloned.standaloneWhyTree)
-    ? deepClone(cloned.standaloneWhyTree)
+    ? ensureWhyNodeIds(deepClone(cloned.standaloneWhyTree), "why")
     : [];
 
   if (cloned.appVersion < 8) {
@@ -2385,6 +2884,8 @@ function migrateProjectData(data) {
     ? sanitizeTextContent(cloned.standaloneWhyTitle)
     : "";
 
+  if (cloned.appVersion < 9) cloned.appVersion = 9;
+  if (cloned.appVersion < 10) cloned.appVersion = 10;
   return cloned;
 }
 
@@ -2738,11 +3239,11 @@ function buildActionPlanPdfPages() {
   // Derfor bruger vi alle rækker fra tabellen og falder tilbage til en tom række,
   // hvis der endnu ikke er skrevet noget.
   let rows = getActionRows();
-  rows = rows.length ? rows : [{ date: "", task: "", who: "", ropex: "" }];
+  rows = rows.length ? rows : [{ rootCause: "", task: "", date: "", who: "", ropex: "" }];
 
-  const hasContent = rows.some(row => row.date || row.task || row.who || row.ropex);
+  const hasContent = rows.some(row => row.rootCause || row.date || row.task || row.who || row.ropex);
   if (!hasContent && rows.length < 4) {
-    while (rows.length < 4) rows.push({ date: "", task: "", who: "", ropex: "" });
+    while (rows.length < 4) rows.push({ rootCause: "", task: "", date: "", who: "", ropex: "" });
   }
 
   const pages = [];
@@ -2777,7 +3278,7 @@ function buildActionPlanPdfPages() {
     table.style.fontSize = "15px";
 
     const colgroup = document.createElement("colgroup");
-    ["14%", "48%", "18%", "20%"].forEach(width => {
+    ["27%", "34%", "13%", "14%", "12%"].forEach(width => {
       const col = document.createElement("col");
       col.style.width = width;
       colgroup.appendChild(col);
@@ -2786,7 +3287,7 @@ function buildActionPlanPdfPages() {
 
     const thead = document.createElement("thead");
     const headerRow = document.createElement("tr");
-    [t("actionTableDate"), t("actionTableTask"), t("actionTableWho"), t("actionTableRopex")].forEach(label => {
+    [t("actionTableRootCause"), t("actionTableTask"), t("actionTableDate"), t("actionTableWho"), t("actionTableRopex")].forEach(label => {
       const th = document.createElement("th");
       th.textContent = label;
       th.style.border = "1px solid #333";
@@ -2804,7 +3305,7 @@ function buildActionPlanPdfPages() {
     const tbody = document.createElement("tbody");
     chunk.forEach(row => {
       const tr = document.createElement("tr");
-      [formatDateForDisplay(row.date), row.task, row.who, row.ropex].forEach(value => {
+      [row.rootCause, row.task, formatDateForDisplay(row.date), row.who, row.ropex].forEach(value => {
         const td = document.createElement("td");
         td.textContent = value || "";
         td.style.border = "1px solid #333";
@@ -3432,17 +3933,17 @@ function directPdfDrawWhyPages(pdf, state, titleText, treeData) {
 
 function directPdfDrawActionPages(pdf, state) {
   let rows = getActionRows();
-  const hasContent = rows.some(row => row.date || row.task || row.who || row.ropex);
+  const hasContent = rows.some(row => row.rootCause || row.date || row.task || row.who || row.ropex);
 
-  if (!rows.length) rows = [{ date: "", task: "", who: "", ropex: "" }];
+  if (!rows.length) rows = [{ rootCause: "", task: "", date: "", who: "", ropex: "" }];
   if (!hasContent) {
-    rows = [{ date: "", task: "", who: "", ropex: "" }];
-    while (rows.length < 4) rows.push({ date: "", task: "", who: "", ropex: "" });
+    rows = [{ rootCause: "", task: "", date: "", who: "", ropex: "" }];
+    while (rows.length < 4) rows.push({ rootCause: "", task: "", date: "", who: "", ropex: "" });
   }
 
   const rowsPerPage = 10;
-  const colX = [48, 178, 720, 892];
-  const colW = [130, 542, 172, 182];
+  const colX = [48, 308, 658, 783, 938];
+  const colW = [260, 350, 125, 155, 136];
   const rowH = 44;
   const tableY = 112;
 
@@ -3455,7 +3956,7 @@ function directPdfDrawActionPages(pdf, state) {
     directPdfSetTextColor(pdf, "#253c7c");
     pdf.text(directPdfCleanText(t("actionTableTitle")), DIAGRAM_W / 2, 72, { align: "center" });
 
-    const headers = [t("actionTableDate"), t("actionTableTask"), t("actionTableWho"), t("actionTableRopex")];
+    const headers = [t("actionTableRootCause"), t("actionTableTask"), t("actionTableDate"), t("actionTableWho"), t("actionTableRopex")];
     pdf.setFontSize(13);
     headers.forEach((header, i) => {
       directPdfSetFillColor(pdf, "#111111");
@@ -3467,7 +3968,7 @@ function directPdfDrawActionPages(pdf, state) {
 
     chunk.forEach((row, rowIndex) => {
       const y0 = tableY + 30 + rowIndex * rowH;
-      const values = [formatDateForDisplay(row.date), row.task, row.who, row.ropex];
+      const values = [row.rootCause, row.task, formatDateForDisplay(row.date), row.who, row.ropex];
       values.forEach((value, i) => {
         directPdfSetFillColor(pdf, "#ffffff");
         directPdfSetDrawColor(pdf, "#333333");
