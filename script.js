@@ -1,5 +1,5 @@
 // =====================================================
-// Fiskeben ROPEX - Script.js (v2.0.4-test)
+// Fiskeben ROPEX - Script.js (v2.0.4)
 // Fokus: stabil app + PDF hvor hele 5xWhy er på én side
 // =====================================================
 

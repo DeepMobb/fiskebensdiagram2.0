@@ -1,19 +1,19 @@
-# ROPEX Fishbone / 5xWhy – v2.0.4-test
+# ROPEX Fishbone / 5xWhy – v2.0.4
 
 Statisk webværktøj til ROPEX-arbejde med fiskeben, 5xWhy, tiltag/opgaver, projektfiler og PDF-eksport.
 
-## v2.0.4-test
+## v2.0.4
 
 ### Versionsstyring
-- Denne testpakke er versionsløftet fra v2.0.3-test til **v2.0.4-test**, så hver ændringsrunde kan spores tydeligt.
+- Denne version er frigivelsen af den testede v2.0.4-test og er klar til main/GitHub Pages.
 
 
-### Teknisk oprydning i v2.0.4-test
+### Teknisk oprydning i v2.0.4
 - Cache-versionen for `style.css` og `script.js` er opdateret, så GitHub Pages/browseren henter de nye filer efter upload.
 - Den tomme, overflødige fil `download` er fjernet fra pakken.
 - Der er ikke ændret i arbejdsgangen for rodårsager og tiltag i denne version.
 
-### Sikkerhed og kompakt rodårsagsvalg i v2.0.4-test
+### Sikkerhed og kompakt rodårsagsvalg i v2.0.4
 - **Tiltag tilføjet** på en fiskebensårsag er nu en statusmarkering og kan ikke klikkes igen for at fjerne koblingen ved et uheld.
 - Det samme princip bruges på en allerede markeret 5xWhy-rodårsag: en ny klikning fjerner ikke tiltaget.
 - En kobling ændres eller fjernes bevidst i tabellen **Tiltag / opgaver**.
